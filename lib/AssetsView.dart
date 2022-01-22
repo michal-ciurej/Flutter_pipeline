@@ -57,16 +57,32 @@ class AssetsView extends StatelessWidget {
           itemCount: sitesList.length,
           itemBuilder: (context, group_index) {
             return StickyHeader(
-
-                header: Container(color:Colors.white,child:Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(children:[ Container(color:Colors.black12, height:30,   child:Image.network(protocol+'://' + serverAddress + ':8080/api/static/'+sites.sites.firstWhere((element) => element.name==sitesList[group_index])
-                        .imageName)),Text(
-                      sitesList[group_index],
-                      textAlign: TextAlign.start,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
-                    )],
-                    ))),
+                header: Container(
+                    color: Colors.white,
+                    child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Container(
+                                color: Colors.black12,
+                                height: 30,
+                                child: Image.network(protocol +
+                                    '://' +
+                                    serverAddress +
+                                    ':8080/api/static/' +
+                                    sites.sites
+                                        .firstWhere((element) =>
+                                            element.name ==
+                                            sitesList[group_index])
+                                        .imageName)),
+                            Text(
+                              sitesList[group_index],
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.normal),
+                            )
+                          ],
+                        ))),
                 content: Container(
                     child: GridView.builder(
                         shrinkWrap: true,
@@ -273,25 +289,31 @@ class AssetsView extends StatelessWidget {
                                                 MaterialPageRoute<void>(
                                                   builder: (BuildContext
                                                           context) =>
-                                                      ScanPage(enabledAssets
+                                                      Scaffold(appBar: AppBar(
+                                                        title: Text(
+                                                            "Asset Tag"),
+                                                      ),body:
+                                                          AppBarcodeScannerWidget
+                                                              .defaultStyle(
+                                                    resultCallback:
+                                                        (String code) {
+
+                                                          Navigator.pop(context);
+
+                                                          var asset = enabledAssets
                                                               .where((element) =>
-                                                                  element
-                                                                      .site ==
-                                                                  sitesList[
-                                                                      group_index])
-                                                              .elementAt(index)
-                                                              .site +
-                                                          "," +
-                                                          enabledAssets
-                                                              .where((element) =>
-                                                                  element
-                                                                      .site ==
-                                                                  sitesList[
-                                                                      group_index])
-                                                              .elementAt(index)
-                                                              .name
-                                                              .toString()),
-                                                  fullscreenDialog: true,
+                                                          element.site ==
+                                                              sitesList[group_index])
+                                                              .elementAt(index);
+
+                                                          _showMyDialog(context,
+                                                              asset.site, asset.name, code);
+
+
+
+                                                    },
+                                                  )),
+                                                  fullscreenDialog: false,
                                                 ));
                                           })
                                     ]),
@@ -304,4 +326,46 @@ class AssetsView extends StatelessWidget {
           });
     });
   }
+}
+
+Future<void> _showMyDialog(context, site, name, result) async {
+
+
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Verify Asset'),
+        content:
+
+        SizedBox(
+            width: double.infinity,
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if(result ==site + "," + name)...[
+                  Icon(Icons.verified,
+                      size: 250, color: Colors.greenAccent),
+                  Text("Asset Verified")
+                  ],
+                  if(result!=site + "," + name)...[
+                    Icon(Icons.restart_alt,
+                        size: 250, color: Colors.greenAccent),
+                    Text("Not the asset your looking for")
+                  ]
+                ]
+            )),
+
+          actions: <Widget>[
+          TextButton(
+            child: const Text('Done'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

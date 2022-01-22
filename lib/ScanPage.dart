@@ -1,105 +1,244 @@
-
+import 'package:ai_barcode/ai_barcode.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:qr_code_dart_scan/qr_code_dart_scan.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-import 'AppBarcodeScannerWidget.dart';
+late String _label;
+late Function(String result) _resultCallback;
 
-class ScanPage extends StatefulWidget {
-  var codeToVerify;
-
-  ScanPage( this.codeToVerify);
+///
+/// AppBarcodeScannerWidget
+class AppBarcodeScannerWidget extends StatefulWidget {
+  ///
+  ///
+  AppBarcodeScannerWidget.defaultStyle({
+    Function(String result)? resultCallback,
+    String label = 'Scan something',
+  }) {
+    _resultCallback = resultCallback ?? (String result) {};
+    _label = label;
+  }
 
   @override
-  _ScanPageState createState() => _ScanPageState(codeToVerify);
+  _AppBarcodeState createState() => _AppBarcodeState();
 }
 
-class _ScanPageState extends State<ScanPage> {
+class _AppBarcodeState extends State<AppBarcodeScannerWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return _BarcodePermissionWidget();
+  }
+}
 
-  var mode = "waiting";
-  bool backCamera = true;
-  var codeToVerify;
+class _BarcodePermissionWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _BarcodePermissionWidgetState();
+  }
+}
 
-  var currentResult;
+class _BarcodePermissionWidgetState extends State<_BarcodePermissionWidget> {
+  bool _isGranted = false;
 
-  _ScanPageState(this.codeToVerify);
+  bool _useCameraScan = true;
+
+  String _inputValue = "";
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _requestMobilePermission() async {
+    if (await Permission.camera.request().isGranted) {
+      setState(() {
+        _isGranted = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    TargetPlatform platform = Theme.of(context).platform;
+    if (!kIsWeb) {
+      if (platform == TargetPlatform.android ||
+          platform == TargetPlatform.iOS) {
+        _requestMobilePermission();
+      } else {
+        setState(() {
+          _isGranted = true;
+        });
+      }
+    } else {
+      setState(() {
+        _isGranted = true;
+      });
+    }
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Validate Asset"),
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: _isGranted
+              ? _useCameraScan
+              ? _BarcodeScannerWidget()
+              : _BarcodeInputWidget.defaultStyle(
+            changed: (String value) {
+              _inputValue = value;
+            },
+          )
+              : Center(
+            child: OutlineButton(
+              onPressed: () {
+                _requestMobilePermission();
+              },
+              child: Text("Request Permission"),
+            ),
+          ),
         ),
-        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          
-          if (mode == "waiting") ...[
-            Expanded(child:Stack(
-              children: [
-                QRCodeDartScanView(
-                  scanInvertedQRCode: true,
-                  onCapture: (Result result) {
-                    setState(() {
-                      currentResult = result;
-                      print(result.text);
-                    });
-                  },
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    margin: EdgeInsets.all(20),
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Text: ?? '),
-                        Text(
-                            'Format: '),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            )),
+        _useCameraScan
+            ? OutlineButton(
+          onPressed: () {
+            setState(() {
+              _useCameraScan = false;
+            });
+          },
+          child: Text("$_label"),
+        )
+            : Row(
+          children: [
+            OutlineButton(
+              onPressed: () {
+                setState(() {
+                  _useCameraScan = true;
+                });
+              },
+
+            ),
+            OutlineButton(
+              onPressed: () {
+                _resultCallback(_inputValue);
+              },
+              child: Text("Wow"),
+            ),
           ],
-          if (mode == "verified")
-            SizedBox(
-                width: double.infinity,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.verified,
-                          size: 250, color: Colors.greenAccent),
-                      Text("Asset Verified")
-                    ]))
-          else if (mode == "failed")
-            SizedBox(
-                width: double.infinity,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.cancel, size: 250, color: Colors.deepOrange),
-                      Text("Incorrect Asset, rescan"),
-                      IconButton(
-                        iconSize: 75,
-                        padding: EdgeInsets.zero,
-                        icon: Icon(Icons.restart_alt),
-                        onPressed: () async {
-                          setState(() {
-                            mode = "waiting";
-                          });
-                        },
-                      )
-                    ]))
-        ]));
+        ),
+      ],
+    );
   }
-
-
 }
 
+class _BarcodeInputWidget extends StatefulWidget {
+  late ValueChanged<String> _changed;
+
+  _BarcodeInputWidget.defaultStyle({
+    required ValueChanged<String> changed,
+  }) {
+    _changed = changed;
+  }
+
+  @override
+  State<StatefulWidget> createState() {
+    return _BarcodeInputState();
+  }
+}
+
+class _BarcodeInputState extends State<_BarcodeInputWidget> {
+  final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+      final text = _controller.text.toLowerCase();
+      _controller.value = _controller.value.copyWith(
+        text: text,
+        selection:
+        TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Padding(padding: EdgeInsets.all(8)),
+        Row(
+          children: <Widget>[
+            Padding(padding: EdgeInsets.all(8)),
+            Text(
+              "$_label：",
+            ),
+            Expanded(
+              child: TextFormField(
+                controller: _controller,
+                onChanged: widget._changed,
+                decoration: InputDecoration(border: OutlineInputBorder()),
+              ),
+            ),
+            Padding(padding: EdgeInsets.all(8)),
+          ],
+        ),
+        Padding(padding: EdgeInsets.all(8)),
+      ],
+    );
+  }
+}
+
+///ScannerWidget
+class _BarcodeScannerWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _AppBarcodeScannerWidgetState();
+  }
+}
+
+class _AppBarcodeScannerWidgetState extends State<_BarcodeScannerWidget> {
+  late ScannerController _scannerController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scannerController = ScannerController(scannerResult: (result) {
+      _resultCallback(result);
+    }, scannerViewCreated: () {
+      TargetPlatform platform = Theme.of(context).platform;
+      if (TargetPlatform.iOS == platform) {
+        Future.delayed(Duration(seconds: 2), () {
+          _scannerController.startCamera();
+          _scannerController.startCameraPreview();
+        });
+      } else {
+        _scannerController.startCamera();
+        _scannerController.startCameraPreview();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _scannerController.stopCameraPreview();
+    _scannerController.stopCamera();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: _getScanWidgetByPlatform(),
+        )
+      ],
+    );
+  }
+
+  Widget _getScanWidgetByPlatform() {
+    return PlatformAiBarcodeScannerWidget(
+      platformScannerController: _scannerController,
+    );
+  }
+}
