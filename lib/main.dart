@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:adaptive_navigation/adaptive_navigation.dart';
 import 'package:alerts/AlertsScreen.dart';
 import 'package:alerts/LineChart.dart';
+import 'package:alerts/TicketCalender.dart';
 import 'package:alerts/WorkflowKanban.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ import 'Cases.dart';
 import 'CasesScreen.dart';
 import 'HeatMap.dart';
 import 'LoginScreen.dart';
+import 'NfcManager.dart';
 import 'Settings.dart';
 import 'Site.dart';
 import 'SiteDraw.dart';
@@ -296,11 +298,17 @@ class _MyHomePageState extends State<MyHomePage> {
       //  AlertsScreen(update: _update, ticket: _raiseTicket, client: stompClient,),
       SplitView(update: _update, ticket: _raiseTicket, client: stompClient),
       SiteDraw(),
+      if (userDetails.featureToggles.contains("calender")) ...[
+      TicketCalender(client: stompClient),],
+      if (userDetails.featureToggles.contains("nfc")) ...[
+        NfcManager(client: stompClient),],
+
       if (MediaQuery.of(context).size.width > 700 &&
-          userDetails.featureToggles.contains("charts")) ...[
+          userDetails.featureToggles.contains("kanban")) ...[
         //HeatMap(client: stompClient),
         WorkflowKanban(client: stompClient),
       ],
+
       //(ticket: _createTicket),
       if (MediaQuery.of(context).size.width < 700 &&
           userDetails.featureToggles.contains("cases")) ...[
@@ -312,8 +320,13 @@ class _MyHomePageState extends State<MyHomePage> {
     var _allDestinations = [
       AdaptiveScaffoldDestination(title: 'Alerts', icon: Icons.home),
       AdaptiveScaffoldDestination(title: 'Settings', icon: Icons.tune),
+    if (userDetails.featureToggles.contains("calender")) ...[
+      AdaptiveScaffoldDestination(title: 'Calender', icon: Icons.event),],
+      if (userDetails.featureToggles.contains("nfc")) ...[
+        AdaptiveScaffoldDestination(title: 'Calender', icon: Icons.nfc),],
+      
       if (MediaQuery.of(context).size.width > 700 &&
-          userDetails.featureToggles.contains("charts")) ...[
+          userDetails.featureToggles.contains("kanban")) ...[
         AdaptiveScaffoldDestination(
             title: 'Ops Board', icon: Icons.space_dashboard),
       ],

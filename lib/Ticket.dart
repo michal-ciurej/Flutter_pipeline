@@ -120,3 +120,22 @@ class FullScreenDialog extends StatelessWidget {
     );
   }
 }
+
+class TicketDetails extends StatelessWidget {
+  var id;
+  var stompClient;
+
+  TicketDetails({this.id, this.stompClient});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        title: Text('Ticket Details: ' + id),
+      ),
+      body: Container(
+          child: Column(children: [Text("asasdsd")])),
+    );
+  }
+}
