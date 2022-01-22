@@ -1,0 +1,17 @@
+{
+  "name": "Landscaper",
+  "short_name": "landscaper",
+  "description": "Platform to triage alerts for assets",
+  "icons": [
+    {
+      "src": "icons/logo.jpeg",
+      "sizes": "32x32",
+      "type": "image/jpeg"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#B12A34",
+  "background_color": "#B12A34"
+}
