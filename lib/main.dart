@@ -27,6 +27,7 @@ import 'CasesScreen.dart';
 import 'HeatMap.dart';
 import 'LoginScreen.dart';
 import 'NfcManager.dart';
+import 'ScanPage.dart';
 import 'Settings.dart';
 import 'Site.dart';
 import 'SiteDraw.dart';
@@ -41,7 +42,7 @@ void onConnect(StompFrame frame) {
     destination: '/topic/messages',
     callback: (frame) {
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       messages.add(result);
     },
   );
@@ -51,7 +52,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the sites");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       sites.add(result);
       print("Finished adding  all the sites");
     },
@@ -62,7 +63,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the assets");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       assets.add(result);
     },
   );
@@ -72,7 +73,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the assets");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       assets.add(result);
     },
   );
@@ -82,7 +83,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the alarms");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       messages.add(result);
     },
   );
@@ -92,7 +93,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Receiving and adding cases");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       cases.add(result);
     },
   );
@@ -102,7 +103,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Receiving and adding cases");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       cases.add(result);
     },
   );
@@ -125,7 +126,7 @@ void onConnect(StompFrame frame) {
     destination: '/topic/status',
     callback: (frame) {
       Map<String, dynamic> result =
-          Map<String, dynamic>.from(json.decode(frame.body!));
+      Map<String, dynamic>.from(json.decode(frame.body!));
       messages.update(result);
     },
   );
@@ -133,7 +134,7 @@ void onConnect(StompFrame frame) {
 
 final stompClient = StompClient(
   config: StompConfig(
-    url: socketProtocol + '://' + serverAddress + ':8080/websocket',
+    url: socketProtocol + '://' + serverAddress + ':8080/landscaper-service/websocket',
     onConnect: onConnect,
     beforeConnect: () async {
       await dotenv.load(fileName: '.env');
@@ -168,7 +169,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       systemNavigationBarColor:
-          SystemUiOverlayStyle.dark.systemNavigationBarColor,
+      SystemUiOverlayStyle.dark.systemNavigationBarColor,
     ),
   );
   HttpOverrides.global = MyHttpOverrides();
@@ -252,7 +253,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
 // Pass this method to the child page.
   void _update(String id) {
@@ -299,18 +300,26 @@ class _MyHomePageState extends State<MyHomePage> {
       SplitView(update: _update, ticket: _raiseTicket, client: stompClient),
       SiteDraw(),
       if (userDetails.featureToggles.contains("calender")) ...[
-      TicketCalender(client: stompClient),],
+        TicketCalender(client: stompClient),
+      ],
       if (userDetails.featureToggles.contains("nfc")) ...[
-        NfcManager(client: stompClient),],
+        NfcManager(client: stompClient),
+      ],
 
-      if (MediaQuery.of(context).size.width > 700 &&
+      if (MediaQuery
+          .of(context)
+          .size
+          .width > 700 &&
           userDetails.featureToggles.contains("kanban")) ...[
         //HeatMap(client: stompClient),
         WorkflowKanban(client: stompClient),
       ],
 
       //(ticket: _createTicket),
-      if (MediaQuery.of(context).size.width < 700 &&
+      if (MediaQuery
+          .of(context)
+          .size
+          .width < 700 &&
           userDetails.featureToggles.contains("cases")) ...[
         CasesScreen(update: _update, ticket: _raiseTicket, client: stompClient),
       ],
@@ -320,17 +329,24 @@ class _MyHomePageState extends State<MyHomePage> {
     var _allDestinations = [
       AdaptiveScaffoldDestination(title: 'Alerts', icon: Icons.home),
       AdaptiveScaffoldDestination(title: 'Settings', icon: Icons.tune),
-    if (userDetails.featureToggles.contains("calender")) ...[
-      AdaptiveScaffoldDestination(title: 'Calender', icon: Icons.event),],
+      if (userDetails.featureToggles.contains("calender")) ...[
+        AdaptiveScaffoldDestination(title: 'Calender', icon: Icons.event),
+      ],
       if (userDetails.featureToggles.contains("nfc")) ...[
-        AdaptiveScaffoldDestination(title: 'Calender', icon: Icons.nfc),],
-      
-      if (MediaQuery.of(context).size.width > 700 &&
+        AdaptiveScaffoldDestination(title: 'NFC', icon: Icons.nfc),
+      ],
+      if (MediaQuery
+          .of(context)
+          .size
+          .width > 700 &&
           userDetails.featureToggles.contains("kanban")) ...[
         AdaptiveScaffoldDestination(
             title: 'Ops Board', icon: Icons.space_dashboard),
       ],
-      if (MediaQuery.of(context).size.width < 700 &&
+      if (MediaQuery
+          .of(context)
+          .size
+          .width < 700 &&
           userDetails.featureToggles.contains("cases")) ...[
         AdaptiveScaffoldDestination(
             title: 'Tickets', icon: Icons.confirmation_number),
@@ -365,7 +381,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return AdaptiveNavigationScaffold(
       navigationTypeResolver: (context) {
-        if (MediaQuery.of(context).size.width > 700) {
+        if (MediaQuery
+            .of(context)
+            .size
+            .width > 700) {
           return NavigationType.rail;
         } else {
           return NavigationType.bottom;
@@ -376,6 +395,47 @@ class _MyHomePageState extends State<MyHomePage> {
       drawerHeader: Text("Drawer"),
       destinations: _allDestinations.sublist(0, _destinationCount),
       appBar: AdaptiveAppBar(
+          actions: <Widget>[
+            if(1 == 1)...[
+
+              IconButton(
+                icon: const Icon(Icons.qr_code_scanner),
+                tooltip: 'Identify Asset',
+                onPressed: () async {
+                  var hasFound=false;
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext
+                        context) =>
+                            Scaffold(
+                                appBar: AppBar(
+                                  title: Text(
+                                      "Identify Asset"),
+                                ),
+                                body:
+                                AppBarcodeScannerWidget
+                                    .defaultStyle(
+                                  resultCallback:
+                                      (String code) {
+
+                                    if(!hasFound) {
+                                      Navigator.pop(context);
+                                      hasFound=true;
+                                      AssetsView().showFindMyDialog(
+                                          context,
+                                          code);
+
+
+                                    }
+                                  },
+                                )),
+                        fullscreenDialog: false,
+                      ));
+                },
+              )
+            ]
+          ],
           toolbarHeight: 100,
           title: Text('Landscaper'),
           leading: Column(children: <Widget>[
@@ -384,7 +444,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Image.network(protocol +
                     '://' +
                     serverAddress +
-                    ':8080/api/static/fr.png')),
+                    ':8080/landscaper-service/api/static/fr.png')),
             Text(
                 _packageInfo.version.toString() +
                     '+' +
@@ -432,6 +492,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+
 class TicketModel {
   var id;
   var description;
@@ -442,7 +503,8 @@ class TicketModel {
   var status;
   var assignee = 'None';
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'date': date,
         'description': description,
         'site': site,
@@ -464,7 +526,10 @@ class SplitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
     const breakpoint = 700.0;
     if (screenWidth >= breakpoint) {
       // widescreen: menu on the left, content on the right
@@ -523,6 +588,6 @@ class MyHttpOverrides extends HttpOverrides {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) =>
-              true; // add your localhost detection logic here if you want
+      true; // add your localhost detection logic here if you want
   }
 }

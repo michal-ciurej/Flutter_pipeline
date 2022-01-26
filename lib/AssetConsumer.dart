@@ -82,6 +82,8 @@ class Asset {
   var imageName;
   var assetClass;
   var manufacturer;
+  var model;
+  var location;
 
 
   Icon getIcon(var size){
@@ -102,4 +104,16 @@ class Asset {
 
 
   }
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'description': description,
+    'site': site,
+    'type': type,
+    'assetClass': assetClass,
+    'status': status,
+    'manufacturer': manufacturer,
+    'model': model,
+    'location' :location
+  };
 }

@@ -17,6 +17,7 @@ import 'package:stomp_dart_client/stomp.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'AddAsset.dart';
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
 import 'Site.dart';
@@ -25,6 +26,10 @@ import 'globals.dart' as globals;
 
 class AssetsView extends StatelessWidget {
   var currentResult;
+
+  void showFindMyDialog(BuildContext context, String code) {
+    _showMyDialog(context, null, null, code, code);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +74,7 @@ class AssetsView extends StatelessWidget {
                                 child: Image.network(protocol +
                                     '://' +
                                     serverAddress +
-                                    ':8080/api/static/' +
+                                    ':8080/landscaper-service/api/static/' +
                                     sites.sites
                                         .firstWhere((element) =>
                                             element.name ==
@@ -80,6 +85,21 @@ class AssetsView extends StatelessWidget {
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.normal),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add_box),
+                              tooltip: 'Create Asset',
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) => AddAsset(
+                                        site: sitesList[group_index],
+                                        stompClient: stompClient),
+                                    fullscreenDialog: true,
+                                  ),
+                                );
+                              },
                             )
                           ],
                         ))),
@@ -236,8 +256,8 @@ class AssetsView extends StatelessWidget {
 
                                             doc.addPage(pw.Page(
                                                 build: (pw.Context context) {
-                                              return pw.Center(
-                                                child: pw.BarcodeWidget(
+                                              return pw.Row(children: [
+                                                pw.BarcodeWidget(
                                                   data: enabledAssets
                                                           .where((element) =>
                                                               element.site ==
@@ -254,11 +274,28 @@ class AssetsView extends StatelessWidget {
                                                           .elementAt(index)
                                                           .name
                                                           .toString(),
-                                                  width: 300,
-                                                  height: 300,
+                                                  width: 50,
+                                                  height: 50,
                                                   barcode: pw.Barcode.qrCode(),
                                                 ),
-                                              ); // Center
+                                                pw.Text("Site: " +
+                                                    enabledAssets
+                                                        .where((element) =>
+                                                            element.site ==
+                                                            sitesList[
+                                                                group_index])
+                                                        .elementAt(index)
+                                                        .site +
+                                                    ' Name: ' +
+                                                    enabledAssets
+                                                        .where((element) =>
+                                                            element.site ==
+                                                            sitesList[
+                                                                group_index])
+                                                        .elementAt(index)
+                                                        .name
+                                                        .toString())
+                                              ]); // Center
                                             })); // Page
 
                                             Navigator.push(
@@ -289,30 +326,36 @@ class AssetsView extends StatelessWidget {
                                                 MaterialPageRoute<void>(
                                                   builder: (BuildContext
                                                           context) =>
-                                                      Scaffold(appBar: AppBar(
-                                                        title: Text(
-                                                            "Asset Tag"),
-                                                      ),body:
-                                                          AppBarcodeScannerWidget
-                                                              .defaultStyle(
-                                                    resultCallback:
-                                                        (String code) {
+                                                      Scaffold(
+                                                          appBar: AppBar(
+                                                            title: Text(
+                                                                "Asset Tag"),
+                                                          ),
+                                                          body:
+                                                              AppBarcodeScannerWidget
+                                                                  .defaultStyle(
+                                                            resultCallback:
+                                                                (String code) {
+                                                              Navigator.pop(
+                                                                  context);
 
-                                                          Navigator.pop(context);
+                                                              var asset = enabledAssets
+                                                                  .where((element) =>
+                                                                      element
+                                                                          .site ==
+                                                                      sitesList[
+                                                                          group_index])
+                                                                  .elementAt(
+                                                                      index);
 
-                                                          var asset = enabledAssets
-                                                              .where((element) =>
-                                                          element.site ==
-                                                              sitesList[group_index])
-                                                              .elementAt(index);
-
-                                                          _showMyDialog(context,
-                                                              asset.site, asset.name, code);
-
-
-
-                                                    },
-                                                  )),
+                                                              _showMyDialog(
+                                                                  context,
+                                                                  asset.site,
+                                                                  asset.name,
+                                                                  code,
+                                                                  null);
+                                                            },
+                                                          )),
                                                   fullscreenDialog: false,
                                                 ));
                                           })
@@ -328,44 +371,67 @@ class AssetsView extends StatelessWidget {
   }
 }
 
-Future<void> _showMyDialog(context, site, name, result) async {
-
-
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false, // user must tap button!
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Verify Asset'),
-        content:
-
-        SizedBox(
-            width: double.infinity,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if(result ==site + "," + name)...[
-                  Icon(Icons.verified,
-                      size: 250, color: Colors.greenAccent),
-                  Text("Asset Verified")
-                  ],
-                  if(result!=site + "," + name)...[
+Future<void> _showMyDialog(context, site, name, result, toFind) async {
+  if (toFind == null) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Verify Asset'),
+          content: SizedBox(
+              width: double.infinity,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (result == site + "," + name) ...[
+                      Icon(Icons.verified,
+                          size: 250, color: Colors.greenAccent),
+                      Text("Asset Verified")
+                    ],
+                    if (result != site + "," + name) ...[
+                      Icon(Icons.restart_alt,
+                          size: 250, color: Colors.greenAccent),
+                      Text("Not the asset your looking for")
+                    ]
+                  ])),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Done'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  } else {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Verify Asset'),
+          content: SizedBox(
+              width: double.infinity,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Icon(Icons.restart_alt,
                         size: 250, color: Colors.greenAccent),
-                    Text("Not the asset your looking for")
-                  ]
-                ]
-            )),
-
+                    Text(toFind)
+                  ])),
           actions: <Widget>[
-          TextButton(
-            child: const Text('Done'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
+            TextButton(
+              child: const Text('Done'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

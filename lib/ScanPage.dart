@@ -65,6 +65,7 @@ class _BarcodePermissionWidgetState extends State<_BarcodePermissionWidget> {
           platform == TargetPlatform.iOS) {
         _requestMobilePermission();
       } else {
+        _requestMobilePermission();
         setState(() {
           _isGranted = true;
         });
