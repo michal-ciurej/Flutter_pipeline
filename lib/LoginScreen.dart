@@ -135,7 +135,7 @@ class _LoginScreen extends State<LoginScreen> {
           savedPassword: "asdasd",
           title: dotenv.env['CUSTOMER'].toString(),
           logo: new NetworkImage(
-              protocol + '://' + serverAddress + ':8080/api/static/pub3.jpeg'),
+              protocol + '://' + serverAddress + ':8080/landscaper-service/api/static/pub3.jpeg'),
           onLogin: _authUser,
           //onSignup: _signupUser,
           /*additionalSignupFields: [
@@ -155,7 +155,7 @@ class _LoginScreen extends State<LoginScreen> {
 
   Future<http.Response> validateDetails(LoginData data) async {
     final response = http.post(
-      Uri.parse(protocol + '://' + serverAddress + ':8080/api/login'),
+      Uri.parse(protocol + '://' + serverAddress + ':8080/landscaper-service/api/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -167,7 +167,7 @@ class _LoginScreen extends State<LoginScreen> {
 
   Future<http.Response> validateSignupDetails(SignupData data) async {
     final response = http.post(
-      Uri.parse(protocol + '://' + serverAddress + ':8080/api/login'),
+      Uri.parse(protocol + '://' + serverAddress + ':8080/landscaper-service/api/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
