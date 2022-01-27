@@ -87,7 +87,7 @@ class AddAsset extends StatelessWidget {
                         // initialValue: 'Male',
                         hint: Text('Select Issue Type'),
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
-                        items: ['Fridge', 'Chiller', 'Oven', 'Laptop', 'Printer', 'Networking']
+                        items: ['Fridge', 'Chiller', 'Oven', 'Laptop', 'Printer', 'Networking', 'Information', 'Monitor', 'IOT']
                             .map((type) => DropdownMenuItem(
                             value: type, child: Text("$type")))
                             .toList(),
@@ -99,7 +99,7 @@ class AddAsset extends StatelessWidget {
                         // initialValue: 'Male',
                         hint: Text('Select Issue Class'),
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
-                        items: ['Refrigeration', 'Fabric', 'Other', 'IT']
+                        items: ['Refrigeration', 'Fabric', 'Other', 'IT', 'Information']
                             .map((type) => DropdownMenuItem(
                             value: type, child: Text("$type")))
                             .toList(),
