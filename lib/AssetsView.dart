@@ -24,7 +24,7 @@ import 'Site.dart';
 import 'Ticket.dart';
 import 'globals.dart' as globals;
 
-class AssetsView extends StatelessWidget {
+class AssetsView extends StatefulWidget {
   var currentResult;
 
   void showFindMyDialog(BuildContext context, String code) {
@@ -32,8 +32,16 @@ class AssetsView extends StatelessWidget {
   }
 
   @override
+  _AssetsView createState() => _AssetsView();
+}
+
+class _AssetsView extends State<AssetsView> {
+  var toPrint = [];
+
+  @override
   Widget build(BuildContext context) {
     int count;
+
 
     if (MediaQuery.of(context).orientation == Orientation.landscape)
       count = 3;
@@ -96,6 +104,78 @@ class AssetsView extends StatelessWidget {
                                     builder: (BuildContext context) => AddAsset(
                                         site: sitesList[group_index],
                                         stompClient: stompClient),
+                                    fullscreenDialog: true,
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.print),
+                              tooltip: 'Print ',
+                              onPressed: () async {
+                                final doc = pw.Document();
+                                doc.addPage(
+                                    pw.Page(build: (pw.Context context) {
+                                  List<pw.Widget> barcodes = [];
+
+                                  var start = 0;
+                                  var end =
+                                      toPrint.length > 3 ? 3 : toPrint.length;
+
+                                  while (toPrint.length != 0 &&
+                                      start != toPrint.length) {
+                                    var row = toPrint.getRange(start, end);
+                                    start = end <= toPrint.length
+                                        ? end
+                                        : toPrint.length;
+                                    end = end + 3 < toPrint.length
+                                        ? end + 3
+                                        : toPrint.length;
+
+                                    //toPrint.removeRange(0, 3);
+                                    List<pw.Widget> cells = [];
+
+                                    row.forEach((element) {
+                                      cells.add(pw.SizedBox(
+                                        width: 70,
+                                        height: 100,
+                                        child: pw.Column(children: [
+                                          pw.BarcodeWidget(
+                                            padding: pw.EdgeInsets.all(1.0),
+                                            data: element,
+                                            width: 50,
+                                            height: 50,
+                                            barcode: pw.Barcode.qrCode(),
+                                          ),
+                                          pw.Text(element)
+                                        ]),
+                                      ));
+
+                                      cells.add(pw.Padding(
+                                          padding: pw.EdgeInsets.only(
+                                              right: 140.0, bottom: 110.0)));
+
+                                      //toPrint.remove(element);
+                                    });
+
+                                    barcodes.add(pw.Row(children: [...cells]));
+                                  }
+
+                                  return pw.Column(children: barcodes);
+
+                                  // Center
+                                })); // Page
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) => Scaffold(
+                                        appBar: AppBar(
+                                          title: Text("Asset Tag"),
+                                        ),
+                                        body: PdfPreview(
+                                          build: (format) => doc.save(),
+                                        )),
                                     fullscreenDialog: true,
                                   ),
                                 );
@@ -229,94 +309,38 @@ class AssetsView extends StatelessWidget {
                                     ),
                                     Row(children: [
                                       IconButton(
-                                          color: Colors.blue,
+                                          color: toPrint.contains(enabledAssets
+                                                  .where((element) =>
+                                                      element.site ==
+                                                      sitesList[group_index])
+                                                  .elementAt(index)
+                                                  .name
+                                                  .toString())
+                                              ? Colors.red
+                                              : Colors.blue,
                                           onPressed: () async {
-                                            final doc = pw.Document();
+                                            setState(() {
 
-                                            final image = QrImage(
-                                              data: enabledAssets
-                                                      .where((element) =>
-                                                          element.site ==
-                                                          sitesList[
-                                                              group_index])
-                                                      .elementAt(index)
-                                                      .site +
-                                                  "," +
-                                                  enabledAssets
-                                                      .where((element) =>
-                                                          element.site ==
-                                                          sitesList[
-                                                              group_index])
-                                                      .elementAt(index)
-                                                      .name
-                                                      .toString(),
-                                              version: QrVersions.auto,
-                                              size: 50.0,
-                                            );
+                                            var asset = enabledAssets
+                                                  .where((element) =>
+                                              element.site ==
+                                                  sitesList[group_index])
+                                                  .elementAt(index)
+                                                  .name
+                                                  .toString();
 
-                                            doc.addPage(pw.Page(
-                                                build: (pw.Context context) {
-                                              return pw.Row(children: [
-                                                pw.BarcodeWidget(
-                                                  data: enabledAssets
-                                                          .where((element) =>
-                                                              element.site ==
-                                                              sitesList[
-                                                                  group_index])
-                                                          .elementAt(index)
-                                                          .site +
-                                                      "," +
-                                                      enabledAssets
-                                                          .where((element) =>
-                                                              element.site ==
-                                                              sitesList[
-                                                                  group_index])
-                                                          .elementAt(index)
-                                                          .name
-                                                          .toString(),
-                                                  width: 50,
-                                                  height: 50,
-                                                  barcode: pw.Barcode.qrCode(),
-                                                ),
-                                                pw.Text("Site: " +
-                                                    enabledAssets
-                                                        .where((element) =>
-                                                            element.site ==
-                                                            sitesList[
-                                                                group_index])
-                                                        .elementAt(index)
-                                                        .site +
-                                                    ' Name: ' +
-                                                    enabledAssets
-                                                        .where((element) =>
-                                                            element.site ==
-                                                            sitesList[
-                                                                group_index])
-                                                        .elementAt(index)
-                                                        .name
-                                                        .toString())
-                                              ]); // Center
-                                            })); // Page
+                                            if(toPrint.contains(asset)){
+                                              toPrint.remove(asset);
+                                            }else{
+                                              toPrint.add(asset);
+                                            }
 
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute<void>(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        Scaffold(
-                                                            appBar: AppBar(
-                                                              title: Text(
-                                                                  "Asset Tag"),
-                                                            ),
-                                                            body: PdfPreview(
-                                                              build: (format) =>
-                                                                  doc.save(),
-                                                            )),
-                                                fullscreenDialog: true,
-                                              ),
-                                            );
+
+                                            });
+
                                           },
-                                          icon: Icon(Icons.print_outlined)),
+                                          icon: Icon(Icons
+                                              .dashboard_customize_outlined)),
                                       IconButton(
                                           icon: Icon(Icons.qr_code_outlined),
                                           color: Colors.blue,
