@@ -49,7 +49,7 @@ class _HeatMap extends State<HeatMap> {
 
   Future<String> _calculation() async {
     final response = await http
-        .get(Uri.parse(protocol+'://192.168.0.7:8080/api/static/test/logo'));
+        .get(Uri.parse(protocol+'://192.168.0.7:' + port + '/api/static/test/logo'));
 
     setState(() {
       mapSvg = response.body;
