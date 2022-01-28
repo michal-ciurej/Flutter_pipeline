@@ -61,7 +61,7 @@ class HeatMap extends StatelessWidget {
 
 
   Future<Map> fetchChartData() async {
-    final response = await http.get(Uri.parse(protocol+"://localhost:8080/api/static/test/logo"));
+    final response = await http.get(Uri.parse(protocol+"://localhost:' + port + '/api/static/test/logo"));
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
