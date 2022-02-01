@@ -147,7 +147,7 @@ class _WorkflowKanban extends State<WorkflowKanban> {
                     Image.network(protocol +
                         '://' +
                         serverAddress +
-                        ':' + port + '/landscaper-service/api/static/' +
+                         port + '/api/static/' +
                         sites.sites
                             .firstWhere(
                                 (element) => itemObject.site == element.name)

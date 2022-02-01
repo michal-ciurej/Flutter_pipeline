@@ -24,6 +24,7 @@ class AppMessages extends ChangeNotifier {
       alarm.assetType = alert['assetType'];
       alarm.dateTime = alert['dateTime'];
 
+      print('adding alarm ' + alarm.id);
       //if(entries.indexWhere((element) => element.id = alarm.id) == -1) {
       entries.add(alarm);
 

@@ -132,7 +132,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                           child: Image.network(protocol +
                               '://' +
                               serverAddress +
-                              ':' + port + '/landscaper-service/api/static/' +
+                               port + '/api/static/' +
                               sites.sites
                                   .firstWhere(
                                       (element) => element.name == value)

@@ -175,7 +175,7 @@ class _SiteDraw extends State<SiteDraw> {
                                         child: Image.network(protocol +
                                             '://' +
                                             serverAddress +
-                                            ':' + port + '/landscaper-service/api/static/' +
+                                            port + '/api/static/' +
                                             filteredSites
                                                 .firstWhere((element) =>
                                             element.name ==
@@ -230,7 +230,7 @@ class _SiteDraw extends State<SiteDraw> {
                                         child: Image.network(protocol +
                                             '://' +
                                             serverAddress +
-                                            ':' + port + '/landscaper-service/api/static/' +
+                                             port + '/api/static/' +
                                             filteredAssetClasses
                                                 .firstWhere((element) =>
                                             element.assetClass ==

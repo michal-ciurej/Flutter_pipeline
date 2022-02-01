@@ -34,9 +34,16 @@ import 'SiteDraw.dart';
 import 'Ticket.dart';
 
 late var serverAddress;
+//remote debugging
 var protocol = 'https';
 var socketProtocol = 'wss';
-var port='443';
+var port=':443/landscaper-service';
+
+//local environment
+//var protocol = 'http';
+//var socketProtocol = 'ws';
+//var port=':8080';
+
 
 void onConnect(StompFrame frame) {
   stompClient.subscribe(
@@ -135,12 +142,12 @@ void onConnect(StompFrame frame) {
 
 final stompClient = StompClient(
   config: StompConfig(
-    url: socketProtocol + '://' + serverAddress + '/landscaper-service/websocket',
+    url: socketProtocol + '://' + serverAddress + port+'/websocket',
     onConnect: onConnect,
     beforeConnect: () async {
       await dotenv.load(fileName: '.env');
 
-      serverAddress = 'app.mybuildings.live';//dotenv.env['SERVER_IP'].toString();
+      serverAddress = dotenv.env['SERVER_IP'].toString();
       ;
 
       print('waiting to connect to ' + serverAddress);
@@ -445,7 +452,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Image.network(protocol +
                     '://' +
                     serverAddress +
-                    ':' + port + '/landscaper-service/api/static/fr.png')),
+                     port + '/api/static/fr.png')),
             Text(
                 _packageInfo.version.toString() +
                     '+' +
