@@ -187,13 +187,13 @@ class _AlertsScreen extends State<AlertsScreen> {
                                     backgroundColor: Color(0xFFFE4A49),
                                     foregroundColor: Colors.white,
                                     icon: Icons.delete,
-                                    label: 'Delete',
+                                    label: 'Acknowledge',
                                   ),
                                 ],
                               ),
 
                               // The end action pane is the one at the right or the bottom side.
-                              endActionPane: const ActionPane(
+                              endActionPane: !userDetails.featureToggles.contains("ticket") ? null: const ActionPane(
                                 motion: ScrollMotion(),
                                 children: [
                                   SlidableAction(
