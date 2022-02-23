@@ -1,22 +1,18 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
-import 'package:alerts/BarChart.dart';
-import 'package:alerts/Gague.dart';
-import 'package:alerts/LineChart.dart';
+import 'package:accordion/accordion.dart';
 import 'package:alerts/main.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:grouped_list/grouped_list.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
-
+import 'package:intl/intl.dart';
 import 'AlarmMessagePayload.dart';
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
 import 'Site.dart';
-import 'Ticket.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'globals.dart' as globals;
 
 class AlertsScreen extends StatefulWidget {
@@ -46,505 +42,458 @@ class _AlertsScreen extends State<AlertsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppMessages>(builder: (context, data, _) {
-      return Column(children: [
-        Row(children: [
-          if (MediaQuery.of(context).size.width > 10000) ...[
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                "Tickets",
-                style: TextStyle(color: Colors.black.withOpacity(0.6)),
-              ),
-            )
-          ],
-          // Here, default theme colors are used for activeBgColor, activeFgColor, inactiveBgColor and inactiveFgColor
-          Container(
-              child: Expanded(
-                  child: SwitchListTile(
-            title: const Text('Un-Cleared Alerts'),
-            value: isFilterSwitched,
-            onChanged: (bool value) {
-              setState(() {
-                isFilterSwitched = value;
-              });
-            },
-            secondary: const Icon(Icons.warning_amber),
-          ))),
-        ]),
-        Container(child: Expanded(child: Consumer<AppMessages>(
-          builder: (context, data, _) {
-            var enabledSites = Provider.of<Sites>(context)
-                .sites
-                .where((element) => element.checked == true)
-                .toList();
+    return Column(children: [
+      Row(children: [
+        if (MediaQuery
+            .of(context)
+            .size
+            .width > 10000) ...[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "Tickets",
+              style: TextStyle(color: Colors.black.withOpacity(0.6)),
+            ),
+          )
+        ],
+        // Here, default theme colors are used for activeBgColor, activeFgColor, inactiveBgColor and inactiveFgColor
+        Container(
+            child: Expanded(
+                child: SwitchListTile(
+                  title: const Text('Un-Cleared Alerts'),
+                  value: isFilterSwitched,
+                  onChanged: (bool value) {
+                    setState(() {
+                      isFilterSwitched = value;
+                    });
+                  },
+                  secondary: const Icon(Icons.warning_amber),
+                ))),
+      ]),
+      Container(
+        //   decoration: BoxDecoration(),
 
-            var enabledTypes = Provider.of<Assets>(context)
-                .assetClasses
-                .where((element) => element.checked == true)
-                .toList();
-
-            //filter out any alerts where the site is not monitored
-            var messages = data.entries
-                .where((element) => enabledSites
-                    .where((site) =>
-                        site.name == element.site &&
-                        (element.status == 'Active' ||
-                            element.ack
-                                    .toString()
-                                    .toUpperCase()
-                                    .compareTo("FALSE") ==
-                                0))
-                    .isNotEmpty)
-                .toList();
-
-            //filter out any alers where the type is not monitored
-            messages = messages
-                .where((element) => enabledTypes
-                    .where((type) => type.assetClass == element.assetClass)
-                    .isNotEmpty)
-                .toList();
-
-            if (isFilterSwitched) {
-              messages = messages
-                  .where((element) => element.status != 'Inactive')
+          child: Expanded(child: Consumer<AppMessages>(
+            builder: (context, data, _) {
+              var enabledSites = Provider
+                  .of<Sites>(context)
+                  .sites
+                  .where((element) => element.checked == true)
                   .toList();
-            }
 
-            bool _customTileExpanded = false;
+              var enabledTypes = Provider
+                  .of<Assets>(context)
+                  .assetClasses
+                  .where((element) => element.checked == true)
+                  .toList();
 
-            return GroupedListView<AlarmMessagePayload, String>(
-              elements: messages,
-              groupBy: (element) => element.site,
-              groupComparator: (value1, value2) => value2.compareTo(value1),
-              itemComparator: (item1, item2) =>
-                  int.parse(item1.priority)
-                      .compareTo(int.parse(item2.priority)) *
-                  -1,
-              order: GroupedListOrder.DESC,
-              useStickyGroupSeparators: true,
-              groupSeparatorBuilder: (String value) => Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Container(
-                          height: 30,
-                          child: Image.network(protocol +
-                              '://' +
-                              serverAddress +
-                               port + '/api/static/' +
-                              sites.sites
-                                  .firstWhere(
-                                      (element) => element.name == value)
-                                  .imageName)),
-                      Text(
-                        value,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.normal),
-                      )
-                    ],
-                  )),
-              itemBuilder: (index, message) {
-                return Card(
-                  elevation: 2,
-                  child: ClipPath(
-                    child: Container(
-                      child: Slidable(
+              //filter out any alerts where the site is not monitored
+              var messages = data.entries
+                  .where((element) =>
+              enabledSites
+                  .where((site) =>
+              site.name == element.site &&
+                  (element.status == 'Active' ||
+                      element.ack
+                          .toString()
+                          .toUpperCase()
+                          .compareTo("FALSE") ==
+                          0))
+                  .isNotEmpty)
+                  .toList();
 
-                          // Specify a key if the Slidable is dismissible.
-                          key: const ValueKey(0),
+              // messages.where((Clapham) => true).length.toString()
 
-                          // The start action pane is the one at the left or the top side.
+              //filter out any alers where the type is not monitored
+              messages = messages
+                  .where((element) =>
+              enabledTypes
+                  .where((type) => type.assetClass == element.assetClass)
+                  .isNotEmpty)
+                  .toList();
 
-                          startActionPane: message.ack
-                                      .toString()
-                                      .toUpperCase()
-                                      .compareTo("TRUE") ==
-                                  0
-                              ? null
-                              : ActionPane(
-                                  //extentRatio:0.0,
-                                  // A motion is a widget used to control how the pane animates.
-                                  motion: const ScrollMotion(),
-                                  extentRatio: 0.25,
-                                  // A pane can dismiss the Slidable.
-                                  //dismissible: DismissiblePane(onDismissed: () {}),
+              if (isFilterSwitched) {
+                messages = messages
+                    .where((element) => element.status != 'Inactive')
+                    .toList();
+              }
 
-                                  // All actions are defined in the children parameter.
-                                  children: [
-                                    // A SlidableAction can have an icon and/or a label.
+              void _doNothing(BuildContext context) {}
 
-                                    /*if (message.ack
-                                      .toString()
-                                      .toUpperCase()
-                                      .compareTo("TRUE") ==
-                                  0) ...[
-                                SlidableAction(
-                                  onPressed: (BuildContext context) =>
-                                      {update(message.id)},
-                                  backgroundColor: Color(0xFFFE4A49),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete,
-                                  label: 'Dismiss',
-                                )
-                              ],*/
-                                    if (message.ack
-                                            .toString()
-                                            .toUpperCase()
-                                            .compareTo("FALSE") ==
-                                        0) ...[
-                                      SlidableAction(
-                                        onPressed: (BuildContext context) =>
-                                            {update(message.id)},
-                                        backgroundColor: Color(0xFF21B7CA),
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.check,
-                                        label: 'Acknowledge',
-                                      )
-                                    ],
-                                  ],
-                                ),
+              Widget _getMessages(String site,
+                  List<AlarmMessagePayload> messages) {
+                print("getting messages ...");
+                var elements = messages
+                    .where((message) => message.site == site)
+                    .toList();
 
-                          // The end action pane is the one at the right or the bottom side.
-
-                          endActionPane: userDetails.featureToggles
-                                      .contains("tickets") ==
-                                  false
-                              ? null
-                              : ActionPane(
-                                  motion: ScrollMotion(),
-                                  extentRatio: 0.30,
-                                  children: [
-                                    SlidableAction(
-                                      // An action can be bigger than the others.
-                                      flex: 2,
-                                      onPressed: (BuildContext context) => {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute<void>(
-                                            builder: (BuildContext context) =>
-                                                FullScreenDialog(
-                                                    id: message.id,
-                                                    stompClient: client),
-                                            fullscreenDialog: true,
-                                          ),
-                                        )
-                                      },
-                                      backgroundColor: Color(0xFF7BC043),
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.archive,
-                                      label: 'Raise Ticket',
-                                    )
-                                  ],
-                                ),
-
-                          // The child of the Slidable is what the user sees when the
-                          // component is not dragged.
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(1.0),
-                            child: Column(
-                              children: <Widget>[
-                                ExpansionTile(
-                                  onExpansionChanged: (bool expanding) =>
-                                      _onExpansion(expanding, message.id),
-
-                                  //backgroundColor: Colors.white,
-                                  trailing: Icon(
-                                    _customTileExpanded
-                                        ? Icons.arrow_drop_down_circle
-                                        : Icons.arrow_drop_down,
-                                  ),
-                                  leading: Icon(Icons.thermostat,
-                                      size: 50.0,
-                                      color: message.type == 'underTemperature'
-                                          ? Colors.blue
-                                          : Colors.deepOrange),
-                                  title: Text("P" +
-                                      message.priority +
-                                      " - " +
-                                      message.type),
-                                  subtitle: Text(message.name),
-                                  controlAffinity:
-                                      ListTileControlAffinity.leading,
-                                  children: <Widget>[
-                                    ListTile(
-                                        title: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                          Column(children: [
-                                            Text("Acknowledged "),
-                                            Icon(
-                                              message.ack == "true"
-                                                  ? Icons.verified
-                                                  : Icons.clear,
-                                            )
-                                          ]),
-                                          Column(children: [
-                                            Text("Alert Status "),
-                                            Icon(
-                                              message.status == "Active"
-                                                  ? Icons.notifications_active
-                                                  : Icons.notifications_off,
-                                            ),
-                                          ]),
-                                          Column(children: [
-                                            Text("Open Tickets"),
-                                            Icon(
-                                              Icons.confirmation_number,
-                                            ),
-                                          ])
-                                        ])),
-                                    ListTile(
-                                        title: Table(
-                                            columnWidths: const <int,
-                                                TableColumnWidth>{
-                                              0: FlexColumnWidth(0.1),
-                                              1: FlexColumnWidth(0.3),
-                                            },
-                                            defaultVerticalAlignment:
-                                                TableCellVerticalAlignment
-                                                    .middle,
-                                            children: <TableRow>[
-                                              TableRow(
-                                                children: <Widget>[
-                                                  TableCell(
-                                                    verticalAlignment:
-                                                        TableCellVerticalAlignment
-                                                            .top,
-                                                    child: Container(
-                                                      height: 32,
-                                                      width: 32,
-                                                      color: Colors.transparent,
-                                                      child:
-                                                          Text("Asset Class"),
-                                                    ),
-                                                  ),
-                                                  TableCell(
-                                                    verticalAlignment:
-                                                        TableCellVerticalAlignment
-                                                            .top,
-                                                    child: Container(
-                                                      height: 32,
-                                                      width: 32,
-                                                      color: Colors.transparent,
-                                                      child: Text(
-                                                          message.assetClass),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              TableRow(
-                                                decoration: const BoxDecoration(
-                                                  color: Colors.transparent,
-                                                ),
-                                                children: <Widget>[
-                                                  TableCell(
-                                                    verticalAlignment:
-                                                        TableCellVerticalAlignment
-                                                            .top,
-                                                    child: Container(
-                                                        height: 32,
-                                                        width: 32,
-                                                        color:
-                                                            Colors.transparent,
-                                                        child:
-                                                            Text("Asset Type")),
-                                                  ),
-                                                  TableCell(
-                                                    verticalAlignment:
-                                                        TableCellVerticalAlignment
-                                                            .top,
-                                                    child: Container(
-                                                        height: 32,
-                                                        width: 32,
-                                                        color:
-                                                            Colors.transparent,
-                                                        child: Text(
-                                                            message.assetType)),
-                                                  )
-                                                ],
-                                              ),
-                                              TableRow(
-                                                children: <Widget>[
-                                                  TableCell(
-                                                    verticalAlignment:
-                                                        TableCellVerticalAlignment
-                                                            .top,
-                                                    child: Container(
-                                                      height: 32,
-                                                      width: 32,
-                                                      color: Colors.transparent,
-                                                      child: Text("Asset Name"),
-                                                    ),
-                                                  ),
-                                                  TableCell(
-                                                    verticalAlignment:
-                                                        TableCellVerticalAlignment
-                                                            .top,
-                                                    child: Container(
-                                                      height: 32,
-                                                      width: 32,
-                                                      color: Colors.transparent,
-                                                      child:
-                                                          Text(message.asset),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              TableRow(
-                                                children: <Widget>[
-                                                  TableCell(
-                                                    verticalAlignment:
-                                                        TableCellVerticalAlignment
-                                                            .top,
-                                                    child: Container(
-                                                      height: 32,
-                                                      width: 32,
-                                                      color: Colors.transparent,
-                                                      child:
-                                                          Text("Manufacturer"),
-                                                    ),
-                                                  ),
-                                                  TableCell(
-                                                    verticalAlignment:
-                                                        TableCellVerticalAlignment
-                                                            .top,
-                                                    child: Container(
-                                                      height: 32,
-                                                      width: 32,
-                                                      color: Colors.transparent,
-                                                      child: Text(assets.assets
-                                                          .where((element) => (element
-                                                                      .site ==
-                                                                  message
-                                                                      .site &&
-                                                              element.type ==
-                                                                  message
-                                                                      .assetType))
-                                                          .toList()
-                                                          .map((e) =>
-                                                              e.manufacturer)
-                                                          .toString()),
-                                                    ),
-                                                  )
-                                                ],
-                                              )
-                                            ])),
-
-
-
-                                    /*ListTile(
-                                        title: Text(
-                                            "Asset Class: " + message.assetClass),
-                                    subtitle: Text(
-                                        "Asset Name: " + message.asset),
-                                    ),
-
-                                    ListTile(
-                                        title: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: <Widget>[
-                                          Text("Ticket: "),
-                                          IconButton(
-                                            icon: const Icon(
-                                                Icons.confirmation_number,
-                                                size: 35),
-                                            tooltip: message.caseNumber,
-                                            onPressed: () {},
-                                          )
-                                        ])),
-                                    ListTile(
-                                        title: Row(children: [
-                                      Text("Status: "),
-                                      Icon(
-                                        message.status == "Active"
-                                            ? Icons.notifications_active
-                                            : Icons.notifications_off,
-                                      )
-                                    ])),
-                                    if (userDetails.featureToggles
-                                        .contains("charts")) ...[
-                                      ListTile(
-                                        title: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            ElevatedButton(
-                                                child: Text('Telemetry'),
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          LineChart(
-                                                              client: client),
-                                                    ),
-                                                  );
-                                                }),
-                                            ElevatedButton(
-                                                child: Text('Points Feed'),
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Gague(client: client),
-                                                    ),
-                                                  );
-                                                }),
-                                            ElevatedButton(
-                                                child: Text('Alarm History'),
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          BarChart(
-                                                              client: client),
-                                                    ),
-                                                  );
-                                                })
-                                          ],
-                                        ),
-                                      )
-                                    ]
-                                  */
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )),
-                      //height: 100,
-                      decoration: BoxDecoration(
-                          color: message.status == 'Inactive'
-                              ? Colors.greenAccent
-                              : Colors.white,
-                          border: Border(
-                              right: BorderSide(
-                                  color: message.type == 'underTemperature'
-                                      ? Colors.blue
-                                      : Colors.deepOrange,
-                                  width: 5),
-                              left: BorderSide(
-                                  color: message.type == 'underTemperature'
-                                      ? Colors.blue
-                                      : Colors.deepOrange,
-                                  width: 5))),
-                    ),
-                    clipper: ShapeBorderClipper(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(3))),
-                  ),
+                ScrollController scrollController = ScrollController(
+                  initialScrollOffset: 10, // or whatever offset you wish
+                  keepScrollOffset: true,
                 );
-              },
-            );
-          },
-        )))
-      ]);
-    });
+
+                return ListView.builder(
+                    shrinkWrap: true,
+                    controller: scrollController,
+                    itemCount: elements.length,
+                    itemBuilder: (context, index) {
+                      var element = elements[index];
+                      print("returning a message ..." + element.id);
+                      return Neumorphic(
+                        // padding:EdgeInsets.fromLTRB(20, 5, 20, 5),
+                          margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                          style: NeumorphicStyle(
+                              shape: NeumorphicShape.flat,
+                              boxShape: NeumorphicBoxShape.roundRect(
+                                  BorderRadius.circular(12)),
+                              depth: 3,
+                              lightSource: LightSource.topLeft,
+                              color: Colors.white,
+                              border: NeumorphicBorder(
+                                color: element.status == 'Active'
+                                    ? Colors.red
+                                    : Colors.lightGreen,
+                                width: 2,
+                              )),
+
+                          // decoration: BoxDecoration(
+                          //     color: Colors.white,
+                          //     border: Border(
+                          //         right: BorderSide(color: element.status=='Active' ? Colors.red: Colors.lightGreen, width: 5),
+                          //         left: BorderSide(
+                          //
+                          //
+                          //
+                          //
+                          //             color: element.status=='Active' ? Colors.red: Colors.lightGreen, width: 5))),
+                          child: Slidable(
+                            // Specify a key if the Slidable is dismissible.
+                              key: ValueKey(messages.indexOf(element)),
+
+                              // The start action pane is the one at the left or the top side.
+                              startActionPane: ActionPane(
+                                // A motion is a widget used to control how the pane animates.
+                                motion: const ScrollMotion(),
+
+                                // A pane can dismiss the Slidable.
+                                dismissible: DismissiblePane(
+                                    onDismissed: () {}),
+
+                                // All actions are defined in the children parameter.
+                                children: const [
+                                  // A SlidableAction can have an icon and/or a label.
+                                  SlidableAction(
+                                    onPressed: doNothing,
+                                    backgroundColor: Color(0xFFFE4A49),
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.delete,
+                                    label: 'Delete',
+                                  ),
+                                ],
+                              ),
+
+                              // The end action pane is the one at the right or the bottom side.
+                              endActionPane: const ActionPane(
+                                motion: ScrollMotion(),
+                                children: [
+                                  SlidableAction(
+                                    // An action can be bigger than the others.
+                                    flex: 2,
+                                    onPressed: doNothing,
+                                    backgroundColor: Color(0xFF7BC043),
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.archive,
+                                    label: 'Archive',
+                                  ),
+                                ],
+                              ),
+
+                              // The child of the Slidable is what the user sees when the
+                              // component is not dragged.
+                              // Site Container Clapham
+                              child: ExpansionTile(
+                                  tilePadding: EdgeInsets.fromLTRB(
+                                      20, 5, 20, 5),
+                                  //margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                  //  tilePadding: EdgeInsets.zero,
+                                  //  childrenPadding: EdgeInsets.zero,
+                                  onExpansionChanged: (value) =>
+                                  {
+                                    setState(() {
+                                      //site.expanded = value;
+                                    })
+                                  },
+                                  title: Text(
+                                    element.name,
+                                    style: Theme
+                                        .of(context)
+                                        .textTheme
+                                        .subtitle1,
+                                  ),
+                                  subtitle: Text(
+                                    element.ack,
+                                    style: Theme
+                                        .of(context)
+                                        .textTheme
+                                        .bodyMedium,
+                                  ),
+                                  children: [
+                                    ListTile(
+                                      title: Table(
+                                        columnWidths: const <
+                                            int,
+                                            TableColumnWidth>{
+                                          0: FlexColumnWidth(0.1),
+                                          1: FlexColumnWidth(0.3),
+                                        },
+                                        defaultVerticalAlignment:
+                                        TableCellVerticalAlignment.middle,
+                                        children: <TableRow>[
+                                          TableRow(
+                                            children: <Widget>[
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                  height: 32,
+                                                  width: 32,
+                                                  color: Colors.transparent,
+                                                  child: Text("Asset Class",
+                                                      style: GoogleFonts.roboto(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                          FontWeight.w200)),
+                                                ),
+                                              ),
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                  height: 32,
+                                                  width: 32,
+                                                  color: Colors.transparent,
+                                                  child: Text(
+                                                      element.assetClass),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          TableRow(
+                                            decoration: const BoxDecoration(
+                                              color: Colors.transparent,
+                                            ),
+                                            children: <Widget>[
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                    height: 32,
+                                                    width: 32,
+                                                    color: Colors.transparent,
+                                                    child: Text("Asset Type")),
+                                              ),
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                    height: 32,
+                                                    width: 32,
+                                                    color: Colors.transparent,
+                                                    child: Text(
+                                                        element.assetType)),
+                                              )
+                                            ],
+                                          ),
+                                          TableRow(
+                                            children: <Widget>[
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                  height: 32,
+                                                  width: 32,
+                                                  color: Colors.transparent,
+                                                  child: Text("Asset Name"),
+                                                ),
+                                              ),
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                  height: 32,
+                                                  width: 32,
+                                                  color: Colors.transparent,
+                                                  child: Text(element.asset),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          TableRow(
+                                            children: <Widget>[
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                  height: 32,
+                                                  width: 32,
+                                                  color: Colors.transparent,
+                                                  child: Text("Manufacturer"),
+                                                ),
+                                              ),
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                  height: 32,
+                                                  width: 32,
+                                                  color: Colors.transparent,
+                                                  child: Text(assets.assets
+                                                      .where((asset) =>
+                                                  (element
+                                                      .site ==
+                                                      asset.site &&
+                                                      asset.type ==
+                                                          element.assetType))
+                                                      .toList()
+                                                      .map((e) =>
+                                                  e.manufacturer)
+                                                      .toString()),
+                                                ),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ])));
+                    });
+              }
+
+              Widget _getSites(List<Site> enabledSites,
+                  List<AlarmMessagePayload> messages) {
+                print("getting the sites....");
+
+                return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: enabledSites.length,
+                    itemBuilder: (context, index) {
+                      var site = enabledSites[index];
+
+                        // Site container background clapham
+                        print("adding a site to the list...");
+
+                        //Container for each site being added
+                        return Neumorphic(
+                            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            padding: EdgeInsets.all(10),
+                            style: NeumorphicStyle(
+                                shape: NeumorphicShape.flat,
+                                border: NeumorphicBorder(
+                                  color: messages
+                                      .where((message) =>
+                                  message.site == site.name &&
+                                      message.status == 'Active')
+                                      .toList()
+                                      .isEmpty
+                                      ? Colors.transparent
+                                      : Colors.red.withOpacity(0.3),
+                                  width: site.expanded == false ? 1 : 0,
+                                ),
+                                boxShape: NeumorphicBoxShape.roundRect(
+                                    BorderRadius.circular(12)),
+                                depth: site.expanded == false ? 3 : 5,
+                                lightSource: LightSource.topLeft,
+                                color: site.expanded == false
+                                    ? Colors.white
+                                    : Colors.white
+
+                              //padding: const EdgeInsets.all(0.0),
+                              // decoration: BoxDecoration(
+
+                              //color: site.expanded==false ? Colors.white :  Colors.white,
+                              //  border: Border(
+                              //      right: BorderSide(color: site.expanded==false ? Colors.red: Colors.transparent, width: 5),
+                              //    left: BorderSide(color: site.expanded==false ? Colors.red: Colors.transparent, width: 5))
+
+                            ),
+                            child: Theme(
+                                data: Theme.of(context)
+                                    .copyWith(dividerColor: Colors.transparent),
+                                child: ExpansionTile(
+                                  tilePadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                                  childrenPadding: EdgeInsets.zero,
+                                  onExpansionChanged: (value) =>
+                                  {
+                                    setState(() {
+                                      site.expanded = value;
+                                    })
+                                  },
+                                  //messages.where((site) => site.name).length.toString()
+                                  title: Text(
+                                    site.name,
+                                    style: GoogleFonts.roboto(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Row(children: [
+                                    Text(
+                                      messages
+                                          .where((message) =>
+                                      message.site == site.name &&
+                                          message.status == 'Active')
+                                          .toList()
+                                          .length
+                                          .toString() +
+                                          " Active"
+
+                                      //data.entries.where(() => site.name) + " alarms"
+                                      ,
+                                      style: GoogleFonts.roboto(
+                                          fontSize: 18,
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(
+                                      "  " +
+                                          messages
+                                              .where((message) =>
+                                          message.site == site.name &&
+                                              message.status == 'Inactive')
+                                              .toList()
+                                              .length
+                                              .toString() +
+                                          " inactive"
+
+                                      //data.entries.where(() => site.name) + " alarms"
+                                      ,
+                                      style: GoogleFonts.roboto(
+                                          fontSize: 16,
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.w300),
+                                      //TextStyle(color: Colors.red, fontSize: 16, ),
+                                      //Theme.of(context).textTheme.bodyText2,
+                                    )
+                                  ]),
+
+                                  children: [
+                                    Container(
+                                        child: _getMessages(
+                                            site.name, messages))
+                                  ],
+                                )));
+
+                    }
+
+                );
+              }
+
+
+
+              return _getSites(enabledSites, messages);
+
+            },
+          )))
+    ]);
   }
 
   void _onExpansion(bool value, String id) {
@@ -556,6 +505,4 @@ class _AlertsScreen extends State<AlertsScreen> {
   }
 }
 
-void doNothing(BuildContext context) {
-  globals.currentIndex = 2;
-}
+void doNothing(BuildContext context) {}

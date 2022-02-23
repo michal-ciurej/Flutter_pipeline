@@ -58,7 +58,7 @@ class AppMessages extends ChangeNotifier {
     var timeNow = DateTime.now();
 
     for (AlarmMessagePayload alarm in entries) {
-      if (autoPurge && alarm.status == 'Inactive' &&
+      if (alarm.status == 'Inactive' &&
           alarm.ack.toString().toUpperCase() == 'TRUE' &&
           DateTime.parse(alarm.dateTime)
               .subtract(new Duration(minutes: int.parse(dotenv.env['PURGE_TIME'].toString())))

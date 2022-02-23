@@ -40,6 +40,7 @@ class Site {
   var checked;
   var image;
   var imageName;
+  var expanded=false;
 
 
 

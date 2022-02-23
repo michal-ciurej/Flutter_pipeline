@@ -33,7 +33,7 @@ class AddAsset extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Color(0xFF25b432),
         title: Text('Add new asset for ' + site),
       ),
       body: Center(

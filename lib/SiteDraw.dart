@@ -25,6 +25,7 @@ class _SiteDraw extends State<SiteDraw> {
 
   String searchString = "";
   var isFilterSwitched = false;
+  var selectAll=true;
 
   @override
   void initState() {
@@ -69,18 +70,6 @@ class _SiteDraw extends State<SiteDraw> {
                               });
                             },
                           ))),
-                  Container(
-                      height: 50,
-                      child: SizedBox(
-                          child: SwitchListTile(
-                            title: const Text('Auto-remove cleared & acked'),
-                            value: autoPurge,
-                            onChanged: (bool value) {
-                              setState(() {
-                                autoPurge = value;
-                              });
-                            },
-                          ))),
                   SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
@@ -111,16 +100,28 @@ class _SiteDraw extends State<SiteDraw> {
                     ),
                   ),
                   Container(
-                      height: 50,
+                      height: 100,
                       child: DrawerHeader(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            Text(
-                              isFilterSwitched
-                                  ? 'Available Sites'
-                                  : 'Available Assets Classes',
-                            ),
+                            CheckboxListTile(
+                                value: selectAll,
+                                onChanged: (value) {
+                                  setState(() {
+                                        selectAll=value!;
+
+                                        if(isFilterSwitched){
+                                          filteredSites.forEach((element) {element.checked=value;});
+                                        }else{
+                                          filteredAssetClasses.forEach((element) {element.checked=value;});
+
+                                        }
+                                  });
+                                },
+                                title: Text("Select all"),
+                                )
                           ],
                         ),
                       )),
@@ -141,6 +142,7 @@ class _SiteDraw extends State<SiteDraw> {
                         } else {
                           print("No filter bing used");
                           filteredSites.clear();
+
                           filteredSites.addAll(data.sites);
                         }
                         return ListView.builder(

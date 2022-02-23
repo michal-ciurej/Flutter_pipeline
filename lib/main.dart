@@ -17,6 +17,8 @@ import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
@@ -31,18 +33,20 @@ import 'ScanPage.dart';
 import 'Settings.dart';
 import 'Site.dart';
 import 'SiteDraw.dart';
+import 'Theme/custom_theme.dart';
 import 'Ticket.dart';
+
 
 late var serverAddress;
 //remote debugging
-var protocol = 'https';
-var socketProtocol = 'wss';
-var port=':443/landscaper-service';
+//var protocol = 'https';
+//var socketProtocol = 'wss';
+//var port=':443/landscaper-service';
 
 //local environment
-//var protocol = 'http';
-//var socketProtocol = 'ws';
-//var port=':8080';
+var protocol = 'http';
+var socketProtocol = 'ws';
+var port=':8080';
 
 
 void onConnect(StompFrame frame) {
@@ -214,9 +218,9 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       title: 'Landscaper',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: CustomTheme.lightTheme,
+
+
       //home: MyHomePage(title: 'Alerts'),
       //navigatorObservers: [TransitionRouteObserver()],
       initialRoute: '/login',
@@ -378,7 +382,7 @@ class _MyHomePageState extends State<MyHomePage> {
         MaterialState.focused,
       };
       if (states.any(interactiveStates.contains)) {
-        return Colors.blue;
+        return Color(0xFF25b432);
       }
       return Colors.black45;
     }
@@ -418,6 +422,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         context) =>
                             Scaffold(
                                 appBar: AppBar(
+
                                   title: Text(
                                       "Identify Asset"),
                                 ),
@@ -444,15 +449,12 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             ]
           ],
-          toolbarHeight: 100,
-          title: Text('Landscaper'),
+          backgroundColor: Colors.white,
+          
+          toolbarHeight: 42,
+          title: Text('MyBuildings.live', style: GoogleFonts.roboto(fontSize: 12,color: Color(0xFFc59c57), fontWeight: FontWeight.bold)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
           leading: Column(children: <Widget>[
-            Container(
-                height: 65,
-                child: Image.network(protocol +
-                    '://' +
-                    serverAddress +
-                     port + '/api/static/fr.png')),
             Text(
                 _packageInfo.version.toString() +
                     '+' +
@@ -550,7 +552,7 @@ class SplitView extends StatelessWidget {
             child: SiteDraw(),
           ),
           // vertical black line as separator
-          Container(width: 0.5, color: Colors.black),
+//          Container(width: 0, color: Colors.transparent),
           // use Expanded to take up the remaining horizontal space
           Expanded(
             // TODO: make this configurable
