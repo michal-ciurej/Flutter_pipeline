@@ -180,10 +180,13 @@ class _AlertsScreen extends State<AlertsScreen> {
                                     onDismissed: () {}),
 
                                 // All actions are defined in the children parameter.
-                                children: const [
+                                children:  [
                                   // A SlidableAction can have an icon and/or a label.
                                   SlidableAction(
-                                    onPressed: doNothing,
+                                    onPressed: (BuildContext context) =>
+                                    {
+                                      update(element.id)
+                                    },
                                     backgroundColor: Color(0xFFFE4A49),
                                     foregroundColor: Colors.white,
                                     icon: Icons.delete,
