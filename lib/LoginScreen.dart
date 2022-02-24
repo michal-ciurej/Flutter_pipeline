@@ -60,17 +60,18 @@ class _LoginScreen extends State<LoginScreen> {
 
   Duration get loginTime => Duration(milliseconds: 200);
 
-  Future<String?> _authUser(LoginData data) async {
+
+  Future<String?> _loginUser(LoginData data) async {
 
 
 
 
-    await validateDetails(data).then((value) {
+    return await validateDetails(data).then((value) {
       userDetails = UserDetails(jsonDecode(value.body));
 
       print(userDetails.loginMessage);
       if (userDetails.loggedIn == true) {
-        return "";
+        return null;
       }
 
       /*if (value=="password") {
@@ -79,8 +80,9 @@ class _LoginScreen extends State<LoginScreen> {
           if (value=="user") {
             return 'User not found';
           }*/
-      return "errir";
+      return "Username or Password incorrect";
     });
+
   }
 
   Future<String?> _signupUser(SignupData data) async {
@@ -99,7 +101,9 @@ class _LoginScreen extends State<LoginScreen> {
 
       print(userDetails.loginMessage);
       if (userDetails.loggedIn == true) {
-        return "";
+        return null;
+      }else{
+        return "Login failed";
       }
 
       /*if (value=="password") {
@@ -131,12 +135,17 @@ class _LoginScreen extends State<LoginScreen> {
           messages: LoginMessages(
             flushbarTitleSuccess: 'You are now setup for your company portal',
           ),
-          savedEmail: "bob@test.com",
-          savedPassword: "asdasd",
+          savedEmail: "",
+          savedPassword: "",
           title: dotenv.env['CUSTOMER'].toString(),
           logo: new NetworkImage(
               protocol + '://' + serverAddress + port + '/api/static/pub3.jpeg'),
-          onLogin: _authUser,
+          onLogin: (loginData) {
+            debugPrint('Login info');
+            debugPrint('Name: ${loginData.name}');
+            debugPrint('Password: ${loginData.password}');
+            return _loginUser(loginData);
+          },
           //onSignup: _signupUser,
           /*additionalSignupFields: [
             UserFormField(
@@ -144,6 +153,7 @@ class _LoginScreen extends State<LoginScreen> {
                 keyName: 'Company Code',
                 icon: Icon(FontAwesomeIcons.chrome))
           ],*/
+          initialAuthMode: AuthMode.login,
           onSubmitAnimationCompleted: () {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (context) => const MyHomePage(),
