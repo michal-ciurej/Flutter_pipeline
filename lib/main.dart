@@ -408,7 +408,7 @@ class _MyHomePageState extends State<MyHomePage> {
       destinations: _allDestinations.sublist(0, _destinationCount),
       appBar: AdaptiveAppBar(
           actions: <Widget>[
-            if(1 == 1)...[
+            if(userDetails.featureToggles.contains("qr"))...[
 
               IconButton(
                 icon: const Icon(Icons.qr_code_scanner),
