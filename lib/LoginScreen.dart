@@ -132,6 +132,7 @@ class _LoginScreen extends State<LoginScreen> {
     return Padding(
         padding: EdgeInsets.only(top: 0.0),
         child: FlutterLogin(
+          userValidator:_noopValidator,
           messages: LoginMessages(
             flushbarTitleSuccess: 'You are now setup for your company portal',
           ),
@@ -185,6 +186,10 @@ class _LoginScreen extends State<LoginScreen> {
           <String, String>{'name': data.name!, 'password': data.password!}),
     );
     return response;
+  }
+
+  String? _noopValidator(String? value) {
+    return null;
   }
 }
 
