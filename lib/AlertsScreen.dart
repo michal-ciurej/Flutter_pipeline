@@ -60,7 +60,7 @@ class _AlertsScreen extends State<AlertsScreen> {
         Container(
             child: Expanded(
                 child: SwitchListTile(
-                  title: const Text('Un-Cleared Alerts'),
+                  title: const Text('Hide Cleared Alerts'),
                   value: isFilterSwitched,
                   onChanged: (bool value) {
                     setState(() {
@@ -92,6 +92,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                   .where((element) =>
               enabledSites
                   .where((site) =>
+              //logic deciding when a site is alarmed but acknowledged... I think
               site.name == element.site &&
                   (element.status == 'Active' ||
                       element.ack
@@ -126,6 +127,9 @@ class _AlertsScreen extends State<AlertsScreen> {
                 var elements = messages
                     .where((message) => message.site == site)
                     .toList();
+                //var currentTime = messages.DateTime;
+                //DateFormat.jm().format(DateTime.now());
+
 
                 ScrollController scrollController = ScrollController(
                   initialScrollOffset: 10, // or whatever offset you wish
@@ -150,9 +154,20 @@ class _AlertsScreen extends State<AlertsScreen> {
                               lightSource: LightSource.topLeft,
                               color: Colors.white,
                               border: NeumorphicBorder(
-                                color: element.status == 'Active'
+                                color: (element.status == 'Active' &&
+                                    element.ack
+                                        .toString()
+                                        .toUpperCase()
+                                        .compareTo("FALSE") ==
+                                        0)
                                     ? Colors.red
-                                    : Colors.lightGreen,
+                                    : (element.status == 'Active' &&
+                                    element.ack
+                                        .toString()
+                                        .toUpperCase()
+                                        .compareTo("FALSE") !=
+                                        0) ? Color(0xffdb9696) :
+                                        Colors.green,
                                 width: 2,
                               )),
 
@@ -176,8 +191,8 @@ class _AlertsScreen extends State<AlertsScreen> {
                                 motion: const ScrollMotion(),
 
                                 // A pane can dismiss the Slidable.
-                                dismissible: DismissiblePane(
-                                    onDismissed: () {}),
+                              //  dismissible: DismissiblePane(
+                                //    onDismissed: () {}),
 
                                 // All actions are defined in the children parameter.
                                 children:  [
@@ -189,7 +204,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                                     },
                                     backgroundColor: Color(0xFFFE4A49),
                                     foregroundColor: Colors.white,
-                                    icon: Icons.delete,
+                                    icon: Icons.remove_red_eye_outlined,
                                     label: 'Acknowledge',
                                   ),
                                 ],
@@ -198,6 +213,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                               // The end action pane is the one at the right or the bottom side.
                               endActionPane: !userDetails.featureToggles.contains("ticket") ? null: const ActionPane(
                                 motion: ScrollMotion(),
+
                                 children: [
                                   SlidableAction(
                                     // An action can be bigger than the others.
@@ -226,27 +242,63 @@ class _AlertsScreen extends State<AlertsScreen> {
                                       //site.expanded = value;
                                     })
                                   },
-                                  title: Text(
+
+                                  title: Row(
+                                      children: [
+                                        Icon(
+                                            Icons.notifications,
+                                          color: (element.status == 'Active' &&
+                                              element.ack
+                                                  .toString()
+                                                  .toUpperCase()
+                                                  .compareTo("FALSE") ==
+                                                  0)
+                                              ? Colors.red
+                                              : (element.status == 'Active' &&
+                                              element.ack
+                                                  .toString()
+                                                  .toUpperCase()
+                                                  .compareTo("FALSE") !=
+                                                  0) ? Color(0xff612f2f) :
+                                          Colors.green,
+                                            size: 35.0,
+
+
+
+                                        ),
+                                      Text( "  " +
                                     element.name,
                                     style: Theme
                                         .of(context)
                                         .textTheme
-                                        .subtitle1,
-                                  ),
-                                  subtitle: Text(
-                                    element.ack,
+                                        .subtitle2?.copyWith(fontSize: 19),
+                                  )]),
+                                  subtitle: Row(
+                                      children: [
+                                        Text(
+                                            //element.dateTime.hour + element.dateTime.minute,
+                                            element.dateTime.substring(11, 16) + "  ", style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                          // dateFormat.format(element.dateTime)
+                                         // DateFormat('kk:mm:a').format(DateFormat.parse(element.dateTime))
+                                        // DateTime.now())
+                                        ),
+                                        Text( "Acknowledged: " +
+                                    element.ack.toString(),
                                     style: Theme
                                         .of(context)
                                         .textTheme
                                         .bodyMedium,
-                                  ),
+                                  )]),
                                   children: [
                                     ListTile(
                                       title: Table(
                                         columnWidths: const <
                                             int,
                                             TableColumnWidth>{
-                                          0: FlexColumnWidth(0.1),
+                                          0: FlexColumnWidth(0.2),
                                           1: FlexColumnWidth(0.3),
                                         },
                                         defaultVerticalAlignment:
@@ -258,25 +310,27 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                 verticalAlignment:
                                                 TableCellVerticalAlignment.top,
                                                 child: Container(
-                                                  height: 32,
+                                                  height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
                                                   child: Text("Asset Class",
-                                                      style: GoogleFonts.roboto(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                          FontWeight.w200)),
+                                                      style: Theme.of(context).textTheme.bodyText2
+                                                      //GoogleFonts.roboto(
+                                                      //    fontSize: 14,
+                                                      //    fontWeight:
+                                                      //    FontWeight.w200)
+                                                  ),
                                                 ),
                                               ),
                                               TableCell(
                                                 verticalAlignment:
                                                 TableCellVerticalAlignment.top,
                                                 child: Container(
-                                                  height: 32,
+                                                  height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
                                                   child: Text(
-                                                      element.assetClass),
+                                                      element.assetClass, style: Theme.of(context).textTheme.subtitle2),
                                                 ),
                                               )
                                             ],
@@ -290,20 +344,20 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                 verticalAlignment:
                                                 TableCellVerticalAlignment.top,
                                                 child: Container(
-                                                    height: 32,
+                                                    height: 25,
                                                     width: 32,
                                                     color: Colors.transparent,
-                                                    child: Text("Asset Type")),
+                                                    child: Text("Asset Type", style: Theme.of(context).textTheme.bodyText2)),
                                               ),
                                               TableCell(
                                                 verticalAlignment:
                                                 TableCellVerticalAlignment.top,
                                                 child: Container(
-                                                    height: 32,
+                                                    height: 25,
                                                     width: 32,
                                                     color: Colors.transparent,
                                                     child: Text(
-                                                        element.assetType)),
+                                                        element.assetType, style: Theme.of(context).textTheme.subtitle2)),
                                               )
                                             ],
                                           ),
@@ -313,20 +367,20 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                 verticalAlignment:
                                                 TableCellVerticalAlignment.top,
                                                 child: Container(
-                                                  height: 32,
+                                                  height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
-                                                  child: Text("Asset Name"),
+                                                  child: Text("Asset Name", style: Theme.of(context).textTheme.bodyText2),
                                                 ),
                                               ),
                                               TableCell(
                                                 verticalAlignment:
                                                 TableCellVerticalAlignment.top,
                                                 child: Container(
-                                                  height: 32,
+                                                  height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
-                                                  child: Text(element.asset),
+                                                  child: Text(element.asset, style: Theme.of(context).textTheme.subtitle2),
                                                 ),
                                               )
                                             ],
@@ -337,17 +391,17 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                 verticalAlignment:
                                                 TableCellVerticalAlignment.top,
                                                 child: Container(
-                                                  height: 32,
+                                                  height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
-                                                  child: Text("Manufacturer"),
+                                                  child: Text("Manufacturer", style: Theme.of(context).textTheme.bodyText2),
                                                 ),
                                               ),
                                               TableCell(
                                                 verticalAlignment:
                                                 TableCellVerticalAlignment.top,
                                                 child: Container(
-                                                  height: 32,
+                                                  height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
                                                   child: Text(assets.assets
@@ -360,7 +414,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                       .toList()
                                                       .map((e) =>
                                                   e.manufacturer)
-                                                      .toString()),
+                                                      .toString(), style: Theme.of(context).textTheme.subtitle2),
                                                 ),
                                               )
                                             ],
@@ -439,6 +493,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   subtitle: Row(children: [
+
                                     Text(
                                       messages
                                           .where((message) =>

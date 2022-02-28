@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alerts/Theme/custom_theme.dart';
 import 'package:alerts/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,6 +17,9 @@ import 'package:stomp_dart_client/stomp_frame.dart';
 import 'Utils.dart';
 
 class LoginScreen extends StatefulWidget {
+
+
+
   late StompClient client;
 
   LoginScreen({required this.client});
@@ -25,6 +29,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreen extends State<LoginScreen> {
+
   var client;
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   String company = 'bob';
@@ -60,18 +65,16 @@ class _LoginScreen extends State<LoginScreen> {
 
   Duration get loginTime => Duration(milliseconds: 200);
 
-
-  Future<String?> _loginUser(LoginData data) async {
-
+  Future<String?> _authUser(LoginData data) async {
 
 
 
-    return await validateDetails(data).then((value) {
+  return  await validateDetails(data).then((value) {
       userDetails = UserDetails(jsonDecode(value.body));
 
       print(userDetails.loginMessage);
       if (userDetails.loggedIn == true) {
-        return null;
+        return "";
       }
 
       /*if (value=="password") {
@@ -129,24 +132,43 @@ class _LoginScreen extends State<LoginScreen> {
 //https://pub.dev/packages/flutter_login
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: EdgeInsets.only(top: 0.0),
-        child: FlutterLogin(
-          userValidator:_noopValidator,
+
+
+
+    return Container(
+
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+         image: DecorationImage(
+          image: new NetworkImage(
+              protocol + '://' + serverAddress + port + '/api/static/youngsBackground.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+
+          child: FlutterLogin(
+            userValidator: _noopValidate,
+            theme: LoginTheme(
+              primaryColor: Color(0xFF136d1b),
+              pageColorLight: Colors.transparent
+
+
+
+             // image: DecorationImage(
+             //   image: AssetImage("api/static/youngsBackground.png"),
+             //   fit: BoxFit.cover,
+             ),
+
+
           messages: LoginMessages(
             flushbarTitleSuccess: 'You are now setup for your company portal',
           ),
-          savedEmail: "",
-          savedPassword: "",
-          title: dotenv.env['CUSTOMER'].toString(),
+        //  savedEmail: "TestLogin",
+        //  savedPassword: "TestPassword",
+      //    title: dotenv.env['CUSTOMER'].toString(),
           logo: new NetworkImage(
-              protocol + '://' + serverAddress + port + '/api/static/pub3.jpeg'),
-          onLogin: (loginData) {
-            debugPrint('Login info');
-            debugPrint('Name: ${loginData.name}');
-            debugPrint('Password: ${loginData.password}');
-            return _loginUser(loginData);
-          },
+              protocol + '://' + serverAddress + port + '/api/static/youngsLogo.png'),
+          onLogin: _authUser,
           //onSignup: _signupUser,
           /*additionalSignupFields: [
             UserFormField(
@@ -154,14 +176,15 @@ class _LoginScreen extends State<LoginScreen> {
                 keyName: 'Company Code',
                 icon: Icon(FontAwesomeIcons.chrome))
           ],*/
-          initialAuthMode: AuthMode.login,
           onSubmitAnimationCompleted: () {
             Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (context) => const MyHomePage(),
             ));
           },
           onRecoverPassword: _recoverPassword,
-        ));
+        )
+
+    );
   }
 
   Future<http.Response> validateDetails(LoginData data) async {
@@ -188,10 +211,12 @@ class _LoginScreen extends State<LoginScreen> {
     return response;
   }
 
-  String? _noopValidator(String? value) {
+  String? _noopValidate(String? value) {
     return null;
   }
 }
+
+
 
 class UserDetails {
   var loginMessage;

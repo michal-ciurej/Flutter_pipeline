@@ -42,6 +42,7 @@ class _Settings extends State<Settings> {
 //https://pub.dev/packages/flutter_login
   @override
   Widget build(BuildContext context) {
+    print('JUst ran settings');
     return Text("Settings");
   }
 }

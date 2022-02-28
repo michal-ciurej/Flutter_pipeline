@@ -221,6 +221,7 @@ class MyApp extends StatelessWidget {
       theme: CustomTheme.lightTheme,
 
 
+
       //home: MyHomePage(title: 'Alerts'),
       //navigatorObservers: [TransitionRouteObserver()],
       initialRoute: '/login',
@@ -452,7 +453,7 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: Colors.white,
           
           toolbarHeight: 42,
-          title: Text('MyBuildings.live', style: GoogleFonts.roboto(fontSize: 12,color: Color(0xFFc59c57), fontWeight: FontWeight.bold)),
+          title: Text('MyBuildings.live', style: GoogleFonts.roboto(fontSize: 12,color: Color(0xFF136d1b), fontWeight: FontWeight.bold)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
           leading: Column(children: <Widget>[
             Text(
