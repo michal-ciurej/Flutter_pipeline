@@ -25,4 +25,6 @@ class AlarmMessagePayload {
 
   var assetType;
 
+  var sensorId;
+
 }

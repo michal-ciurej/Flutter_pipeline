@@ -368,6 +368,33 @@ class _AlertsScreen extends State<AlertsScreen> {
                                               )
                                             ],
                                           ),
+                                          if(element.sensorId!=null )...[
+                                            TableRow(
+                                            decoration: const BoxDecoration(
+                                              color: Colors.transparent,
+                                            ),
+                                            children: <Widget>[
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                    height: 25,
+                                                    width: 32,
+                                                    color: Colors.transparent,
+                                                    child: Text("Sensor Id", style: Theme.of(context).textTheme.bodyText2)),
+                                              ),
+                                              TableCell(
+                                                verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                                child: Container(
+                                                    height: 25,
+                                                    width: 32,
+                                                    color: Colors.transparent,
+                                                    child: Text(
+                                                        element.sensorId, style: Theme.of(context).textTheme.subtitle2)),
+                                              )
+                                            ],
+                                          )],
                                           TableRow(
                                             children: <Widget>[
                                               TableCell(
