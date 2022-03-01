@@ -411,8 +411,8 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                   (element
                                                       .site ==
                                                       asset.site &&
-                                                      asset.type ==
-                                                          element.assetType))
+                                                      asset.name ==
+                                                          element.asset))
                                                       .toList()
                                                       .map((e) =>
                                                   e.manufacturer)
