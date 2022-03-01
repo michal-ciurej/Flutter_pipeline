@@ -166,7 +166,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                                         .toString()
                                         .toUpperCase()
                                         .compareTo("FALSE") !=
-                                        0) ? Color(0xffdb9696) :
+                                        0) ? Color(0xffa3a3a3) :
                                         Colors.green,
                                 width: 2,
                               )),
@@ -202,7 +202,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                                     {
                                       update(element.id)
                                     },
-                                    backgroundColor: Color(0xFFFE4A49),
+                                    backgroundColor: Color(0xff595959),
                                     foregroundColor: Colors.white,
                                     icon: Icons.remove_red_eye_outlined,
                                     label: 'Acknowledge',
@@ -259,7 +259,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                   .toString()
                                                   .toUpperCase()
                                                   .compareTo("FALSE") !=
-                                                  0) ? Color(0xff612f2f) :
+                                                  0) ? Color(0xff595959) :
                                           Colors.green,
                                             size: 35.0,
 
@@ -277,20 +277,22 @@ class _AlertsScreen extends State<AlertsScreen> {
                                       children: [
                                         Text(
                                             //element.dateTime.hour + element.dateTime.minute,
-                                            element.dateTime.substring(11, 16) + "  ", style: Theme
+                                            element.dateTime.substring(11, 16) + "  "
+                                          /*, style: Theme
                                             .of(context)
                                             .textTheme
-                                            .bodyMedium,
+                                            .bodyMedium, */
                                           // dateFormat.format(element.dateTime)
                                          // DateFormat('kk:mm:a').format(DateFormat.parse(element.dateTime))
                                         // DateTime.now())
                                         ),
-                                        Text( "Acknowledged: " +
+                                        Text( element.dateTime.substring(0, 10)
+                                          /*"Acknowledged: " +
                                     element.ack.toString(),
                                     style: Theme
                                         .of(context)
                                         .textTheme
-                                        .bodyMedium,
+                                        .bodyMedium, */
                                   )]),
                                   children: [
                                     ListTile(
