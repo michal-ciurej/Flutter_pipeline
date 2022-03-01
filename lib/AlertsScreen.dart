@@ -273,27 +273,8 @@ class _AlertsScreen extends State<AlertsScreen> {
                                         .textTheme
                                         .subtitle2?.copyWith(fontSize: 19),
                                   )]),
-                                  subtitle: Row(
-                                      children: [
-                                        Text(
-                                            //element.dateTime.hour + element.dateTime.minute,
-                                            element.dateTime.substring(11, 16) + "  "
-                                          /*, style: Theme
-                                            .of(context)
-                                            .textTheme
-                                            .bodyMedium, */
-                                          // dateFormat.format(element.dateTime)
-                                         // DateFormat('kk:mm:a').format(DateFormat.parse(element.dateTime))
-                                        // DateTime.now())
-                                        ),
-                                        Text( element.dateTime.substring(0, 10)
-                                          /*"Acknowledged: " +
-                                    element.ack.toString(),
-                                    style: Theme
-                                        .of(context)
-                                        .textTheme
-                                        .bodyMedium, */
-                                  )]),
+                                  subtitle:  Text(DateFormat("HH:mm dd-MMM-yyyy").format(DateTime.parse(element.dateTime))),
+
                                   children: [
                                     ListTile(
                                       title: Table(

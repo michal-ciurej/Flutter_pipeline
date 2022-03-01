@@ -24,14 +24,13 @@ class AppMessages extends ChangeNotifier {
       alarm.assetType = alert['assetType'];
       alarm.dateTime = alert['dateTime'];
 
-      print('adding alarm ' + alarm.id);
-      //if(entries.indexWhere((element) => element.id = alarm.id) == -1) {
+      if(entries.indexWhere((element) => element.id == alarm.id && element.site == alarm.site) == -1) {
       entries.add(alarm);
 
-      cleanUpMessages();
+      //cleanUpMessages();
       entries.sort((a, b) => a.site.compareTo(b.site));
       notifyListeners();
-      //}
+      }
 
     }
   }
