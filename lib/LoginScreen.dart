@@ -149,8 +149,9 @@ class _LoginScreen extends State<LoginScreen> {
           child: FlutterLogin(
             userValidator: _noopValidate,
             theme: LoginTheme(
-              primaryColor: Color(0xFF136d1b),
-              pageColorLight: Colors.transparent
+              primaryColor: Colors.transparent,
+              pageColorLight: Colors.transparent,
+             buttonTheme: LoginButtonTheme(backgroundColor: Color(0xFF136d1b))
 
 
 
