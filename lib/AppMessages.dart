@@ -7,6 +7,7 @@ import 'SiteDraw.dart';
 class AppMessages extends ChangeNotifier {
   List<AlarmMessagePayload> entries = <AlarmMessagePayload>[];
 
+
   void add(List<Map<String, dynamic>> alerts) {
     for (Map<String, dynamic> alert in alerts) {
       print('Adding new alarm ' + alert['site']);
@@ -63,5 +64,6 @@ class AppMessages extends ChangeNotifier {
 
       }
     }
+
 
 }

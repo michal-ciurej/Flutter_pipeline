@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp.dart';
 import 'package:intl/intl.dart';
 import 'AlarmMessagePayload.dart';
+import 'AlertHistoryScreen.dart';
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
 import 'Site.dart';
@@ -189,7 +190,7 @@ class _AlertsScreen extends State<AlertsScreen> {
 
                             children: [
                               // A SlidableAction can have an icon and/or a label.
-                              if (element.ack =='false') ...[
+                              if (element.ack == 'false') ...[
                                 SlidableAction(
                                   onPressed: (BuildContext context) =>
                                       {update(element.id)},
@@ -198,7 +199,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                                   icon: Icons.task_alt_outlined,
                                   label: 'Acknowledge',
                                 )
-                              ]else...[
+                              ] else ...[
                                 SlidableAction(
                                   onPressed: (BuildContext context) => {},
                                   backgroundColor: Color(0xff595959),
@@ -449,6 +450,49 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .subtitle2),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                      TableRow(
+                                        children: <Widget>[
+                                          TableCell(
+                                            verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                            child: Container(
+                                              height: 25,
+                                              width: 32,
+                                              color: Colors.transparent,
+                                              child: Text("History",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText2),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            verticalAlignment:
+                                                TableCellVerticalAlignment.top,
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              height: 25,
+                                              width: 32,
+                                              color: Colors.transparent,
+                                              child: IconButton(
+                                                alignment: Alignment.centerLeft,
+                                                icon: Icon(Icons.history_outlined),
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute<void>(
+                                                      builder: (BuildContext context) => AlertHistoryScreen(
+                                                          site: element.site,
+                                                          asset: element.asset,
+                                                          client: client),
+                                                      fullscreenDialog: true,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
                                             ),
                                           )
                                         ],

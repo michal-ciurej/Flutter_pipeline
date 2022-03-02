@@ -27,4 +27,29 @@ class AlarmMessagePayload {
 
   var sensorId;
 
+  List<AlarmMessagePayload> fromJson(List<dynamic> alerts) {
+    List<AlarmMessagePayload> results = [];
+
+    for (Map<String, dynamic> alert in alerts) {
+      AlarmMessagePayload alarm = new AlarmMessagePayload();
+      alarm.id = alert['id'];
+      alarm.name = alert['name'];
+      alarm.site = alert['site'];
+      alarm.status = alert['status'];
+      alarm.ack = alert['ack'];
+      alarm.caseNumber = alert['caseNumber'];
+      alarm.type = alert['type'];
+      alarm.asset = alert['asset'];
+      alarm.priority = alert['priority'];
+      alarm.assetClass = alert['assetClass'];
+      alarm.assetType = alert['assetType'];
+      alarm.dateTime = alert['dateTime'];
+      alarm.sensorId = alert['sensorId'];
+      results.add(alarm);
+
+    }
+    return results;
+  }
+
+
 }
