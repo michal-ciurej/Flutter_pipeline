@@ -28,7 +28,7 @@ class AppMessages extends ChangeNotifier {
       if(entries.indexWhere((element) => element.id == alarm.id && element.site == alarm.site) == -1) {
       entries.add(alarm);
 
-      //cleanUpMessages();
+      cleanUpMessages();
       entries.sort((a, b) => a.site.compareTo(b.site));
       notifyListeners();
       }
@@ -55,18 +55,13 @@ class AppMessages extends ChangeNotifier {
   }
 
   void cleanUpMessages() {
-    var timeNow = DateTime.now();
 
     for (AlarmMessagePayload alarm in entries) {
       if (alarm.status == 'Inactive' &&
-          alarm.ack.toString().toUpperCase() == 'TRUE' &&
-          DateTime.parse(alarm.dateTime)
-              .subtract(new Duration(minutes: int.parse(dotenv.env['PURGE_TIME'].toString())))
-              .isBefore(timeNow)) {
-        print('aging out alarm ' + alarm.id);
+          alarm.ack.toString().toUpperCase() == 'TRUE' )
         entries.remove(alarm);
 
       }
     }
-  }
+
 }
