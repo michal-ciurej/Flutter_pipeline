@@ -278,7 +278,8 @@ class _AlertsScreen extends State<AlertsScreen> {
                                   title: Table(
                                     columnWidths: const <int, TableColumnWidth>{
                                       0: FlexColumnWidth(0.2),
-                                      1: FlexColumnWidth(0.3),
+                                      1: FlexColumnWidth(0.7),
+
                                     },
                                     defaultVerticalAlignment:
                                         TableCellVerticalAlignment.middle,
@@ -472,13 +473,20 @@ class _AlertsScreen extends State<AlertsScreen> {
                                           TableCell(
                                             verticalAlignment:
                                                 TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              alignment: Alignment.center,
+                                            child: Row(
+                                            /*  margin: EdgeInsets.only(bottom: 10),
+                                              alignment: Alignment.centerRight,
                                               height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: IconButton(
-                                                alignment: Alignment.centerLeft,
+                                             // width: 32,
+                                              color: Colors.transparent, */
+                                              children: [
+                                                Text("History",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyText2),
+
+                                              IconButton(
+                                                alignment: Alignment.centerRight,
                                                 icon: Icon(Icons.history_outlined),
                                                 onPressed: () {
                                                   Navigator.push(
@@ -493,6 +501,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                   );
                                                 },
                                               ),
+                                            ]
                                             ),
                                           )
                                         ],
