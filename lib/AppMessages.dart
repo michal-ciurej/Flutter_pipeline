@@ -30,7 +30,7 @@ class AppMessages extends ChangeNotifier {
       entries.add(alarm);
 
       cleanUpMessages();
-      entries.sort((a, b) => a.site.compareTo(b.site));
+      entries.sort((a, b) => a.dateTime.compareTo(b.dateTime));
       notifyListeners();
       }
 
