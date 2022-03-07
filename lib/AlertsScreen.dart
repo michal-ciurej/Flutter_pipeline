@@ -414,6 +414,41 @@ class _AlertsScreen extends State<AlertsScreen> {
                                           ],
                                         )
                                       ],
+                                      if (element.messageText != null) ...[
+                                        TableRow(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.transparent,
+                                          ),
+                                          children: <Widget>[
+                                            TableCell(
+                                              verticalAlignment:
+                                              TableCellVerticalAlignment
+                                                  .top,
+                                              child: Container(
+                                                  height: 25,
+                                                  width: 32,
+                                                  color: Colors.transparent,
+                                                  child: Text("Alert Description",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2)),
+                                            ),
+                                            TableCell(
+                                              verticalAlignment:
+                                              TableCellVerticalAlignment
+                                                  .top,
+                                              child: Container(
+                                                  height: 25,
+                                                  width: 32,
+                                                  color: Colors.transparent,
+                                                  child: Text(element.messageText,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .subtitle2)),
+                                            )
+                                          ],
+                                        )
+                                      ],
                                       TableRow(
                                         children: <Widget>[
                                           TableCell(
