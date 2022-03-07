@@ -25,12 +25,13 @@ class AppMessages extends ChangeNotifier {
       alarm.assetType = alert['assetType'];
       alarm.dateTime = alert['dateTime'];
       alarm.sensorId = alert['sensorId'];
+      alarm.messageText = alert['messageText'];
 
       if(entries.indexWhere((element) => element.id == alarm.id && element.site == alarm.site) == -1) {
       entries.add(alarm);
 
       cleanUpMessages();
-      entries.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+      entries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
       notifyListeners();
       }
 
@@ -43,6 +44,7 @@ class AppMessages extends ChangeNotifier {
         alarm.status = update['status'];
         alarm.ack = update['ack'];
         alarm.caseNumber = update['caseNumber'];
+        alarm.messageText=update['messageText'];
         // notifyListeners();
         print('updating alarm' + alarm.id + ' with status ' + alarm.status);
         if (alarm.status == 'closed') {

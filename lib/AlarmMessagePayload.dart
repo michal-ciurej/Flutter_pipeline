@@ -27,6 +27,8 @@ class AlarmMessagePayload {
 
   var sensorId;
 
+  var messageText;
+
   List<AlarmMessagePayload> fromJson(List<dynamic> alerts) {
     List<AlarmMessagePayload> results = [];
 
