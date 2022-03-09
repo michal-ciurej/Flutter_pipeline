@@ -477,19 +477,23 @@ class _AlertHistoryScreen extends State<AlertHistoryScreen> {
               itemCount: history.length,
               itemBuilder: (context, index) {
                 return Neumorphic(
-                  margin: EdgeInsets.fromLTRB(25, 5, 25, 5),
+                  margin: EdgeInsets.fromLTRB(25, 5, 25, 0),
 
                   style: NeumorphicStyle(
                       shape: NeumorphicShape.flat,
+                      border: NeumorphicBorder(
+                        color: Color(0x33000000),
+                        width: 0.8),
                       boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
                       depth: 1,
                       lightSource: LightSource.topLeft,
-                      color: Colors.white
+                      color: Colors.white,
+
                   ),
 
                     child:
                     Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(20),
                       child: Text(history[index].name, style: Theme.of(context)
                           .textTheme
                           .subtitle2)

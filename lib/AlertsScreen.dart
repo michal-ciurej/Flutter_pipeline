@@ -273,7 +273,10 @@ class _AlertsScreen extends State<AlertsScreen> {
                                 )
                               ]),
                               subtitle: Text(DateFormat("HH:mm dd-MMM-yyyy")
-                                  .format(DateTime.parse(element.dateTime))),
+                                  .format(DateTime.parse(element.dateTime)), style: GoogleFonts.roboto(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w300)
+                              ),
                               children: [
                                 ListTile(
                                   title: Table(
@@ -604,6 +607,8 @@ class _AlertsScreen extends State<AlertsScreen> {
                           child: ExpansionTile(
                             tilePadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             childrenPadding: EdgeInsets.zero,
+                            collapsedTextColor: Colors.black,
+                            textColor: Colors.black,
                             onExpansionChanged: (value) => {
                               setState(() {
                                 site.expanded = value;
@@ -613,7 +618,10 @@ class _AlertsScreen extends State<AlertsScreen> {
                             title: Text(
                               site.name,
                               style: GoogleFonts.roboto(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                                  fontSize: 20, fontWeight: site.expanded == false
+                                  ? FontWeight.w300
+                                  : FontWeight.w500),
+
                             ),
                             subtitle: Row(children: [
                               Text(
@@ -629,9 +637,9 @@ class _AlertsScreen extends State<AlertsScreen> {
                                 //data.entries.where(() => site.name) + " alarms"
                                 ,
                                 style: GoogleFonts.roboto(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     color: Colors.red,
-                                    fontWeight: FontWeight.w600),
+                                    fontWeight: FontWeight.w300),
                               ),
                               Text(
                                 "  " +
