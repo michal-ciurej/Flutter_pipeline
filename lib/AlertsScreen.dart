@@ -181,6 +181,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                           startActionPane: ActionPane(
                             // A motion is a widget used to control how the pane animates.
                             motion: const ScrollMotion(),
+                            //check here
 
                             // A pane can dismiss the Slidable.
                             //  dismissible: DismissiblePane(
@@ -272,13 +273,17 @@ class _AlertsScreen extends State<AlertsScreen> {
                                 )
                               ]),
                               subtitle: Text(DateFormat("HH:mm dd-MMM-yyyy")
-                                  .format(DateTime.parse(element.dateTime))),
+                                  .format(DateTime.parse(element.dateTime)), style: GoogleFonts.roboto(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w300)
+                              ),
                               children: [
                                 ListTile(
                                   title: Table(
                                     columnWidths: const <int, TableColumnWidth>{
                                       0: FlexColumnWidth(0.2),
-                                      1: FlexColumnWidth(0.3),
+                                      1: FlexColumnWidth(0.7),
+
                                     },
                                     defaultVerticalAlignment:
                                         TableCellVerticalAlignment.middle,
@@ -498,35 +503,45 @@ class _AlertsScreen extends State<AlertsScreen> {
                                               height: 25,
                                               width: 32,
                                               color: Colors.transparent,
-                                              child: Text("History",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText2),
+
                                             ),
                                           ),
                                           TableCell(
                                             verticalAlignment:
                                                 TableCellVerticalAlignment.top,
                                             child: Container(
-                                              alignment: Alignment.center,
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: IconButton(
-                                                alignment: Alignment.centerLeft,
-                                                icon: Icon(Icons.history_outlined),
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute<void>(
-                                                      builder: (BuildContext context) => AlertHistoryScreen(
-                                                          site: element.site,
-                                                          asset: element.asset,
-                                                          client: client),
-                                                      fullscreenDialog: true,
-                                                    ),
-                                                  );
-                                                },
+                                              width: 1,
+                                              margin: EdgeInsets.only(bottom: 10),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                              /*  margin: EdgeInsets.only(bottom: 10),
+                                                alignment: Alignment.centerRight,
+                                                height: 25,
+                                               // width: 32,
+                                                color: Colors.transparent, */
+                                                children: [
+                                                  Text("Alarm History: ",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2!.copyWith(fontWeight: FontWeight.w300, fontSize: 14, color: Colors.black26)),
+
+                                                IconButton(
+                                                  alignment: Alignment.centerRight,
+                                                  icon: Icon(Icons.history_outlined, color: Colors.black26,),
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute<void>(
+                                                        builder: (BuildContext context) => AlertHistoryScreen(
+                                                            site: element.site,
+                                                            asset: element.asset,
+                                                            client: client),
+                                                      //  fullscreenDialog: true,
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ]
                                               ),
                                             ),
                                           )
@@ -592,6 +607,8 @@ class _AlertsScreen extends State<AlertsScreen> {
                           child: ExpansionTile(
                             tilePadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             childrenPadding: EdgeInsets.zero,
+                            collapsedTextColor: Colors.black,
+                            textColor: Colors.black,
                             onExpansionChanged: (value) => {
                               setState(() {
                                 site.expanded = value;
@@ -601,7 +618,10 @@ class _AlertsScreen extends State<AlertsScreen> {
                             title: Text(
                               site.name,
                               style: GoogleFonts.roboto(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
+                                  fontSize: 20, fontWeight: site.expanded == false
+                                  ? FontWeight.w300
+                                  : FontWeight.w500),
+
                             ),
                             subtitle: Row(children: [
                               Text(
@@ -617,9 +637,9 @@ class _AlertsScreen extends State<AlertsScreen> {
                                 //data.entries.where(() => site.name) + " alarms"
                                 ,
                                 style: GoogleFonts.roboto(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     color: Colors.red,
-                                    fontWeight: FontWeight.w600),
+                                    fontWeight: FontWeight.w300),
                               ),
                               Text(
                                 "  " +
