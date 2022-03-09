@@ -32,7 +32,7 @@ class CustomTheme {
       bodyText1: GoogleFonts.roboto(
           fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5),
       bodyText2: GoogleFonts.roboto(
-          fontSize: 14, fontWeight: FontWeight.w400, letterSpacing: 0.25),
+          fontSize: 14, fontWeight: FontWeight.w200, letterSpacing: 0.25),
       button: GoogleFonts.roboto(
           fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 1.25),
       caption: GoogleFonts.roboto(
@@ -74,8 +74,12 @@ class CustomTheme {
               fontSize: 12, fontWeight: FontWeight.w400, letterSpacing: 0.4),
           overline: GoogleFonts.roboto(
               fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 1.5),
-        )
+        ),
 
+
+      iconTheme: const IconThemeData(
+      color: Color(0xFF136d1b), //change your color here
+    )
 
 
 
