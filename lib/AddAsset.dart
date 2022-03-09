@@ -85,9 +85,9 @@ class AddAsset extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyText1,
                         decoration: InputDecoration(labelText: "Asset Type"),
                         // initialValue: 'Male',
-                        hint: Text('Select Issue Type'),
+                        hint: Text('Select Asset Type'),
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
-                        items: ['Fridge', 'Chiller', 'Oven', 'Laptop', 'Printer', 'Networking', 'Information', 'Monitor', 'IOT']
+                        items: userDetails.assetTypes
                             .map((type) => DropdownMenuItem(
                             value: type, child: Text("$type")))
                             .toList(),
@@ -97,9 +97,9 @@ class AddAsset extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyText1,
                         decoration: InputDecoration(labelText: "Asset Class"),
                         // initialValue: 'Male',
-                        hint: Text('Select Issue Class'),
+                        hint: Text('Select Asset Class'),
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
-                        items: ['Refrigeration', 'Fabric', 'Other', 'IT', 'Information']
+                        items: userDetails.assetClasses
                             .map((type) => DropdownMenuItem(
                             value: type, child: Text("$type")))
                             .toList(),

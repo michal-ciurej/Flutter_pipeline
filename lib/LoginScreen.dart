@@ -228,6 +228,10 @@ class UserDetails {
   var featureToggles = [];
   var users = [];
   var workflowSteps = [];
+  var assetTypes = [];
+  var assetClasses = [];
+
+
 
   UserDetails(json) {
     this.loggedIn = json['loggedIn'];
@@ -238,6 +242,8 @@ class UserDetails {
     this.featureToggles = json['featureToggles'];
     this.users = json['users'];
     this.workflowSteps = json['workflowSteps'];
+    this.assetTypes = json['assetTypes'];
+    this.assetClasses = json['assetClasses'];
     cases.setWorkflowSteps(workflowSteps);
   }
 }
