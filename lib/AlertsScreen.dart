@@ -1,4 +1,5 @@
 import 'package:accordion/accordion.dart';
+import 'package:alerts/SiteAlertsScreen.dart';
 import 'package:alerts/main.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
@@ -272,22 +273,52 @@ class _AlertsScreen extends State<AlertsScreen> {
                                       ?.copyWith(fontSize: 19),
                                 )
                               ]),
-                              subtitle: Text(DateFormat("HH:mm dd-MMM-yyyy")
-                                  .format(DateTime.parse(element.dateTime)), style: GoogleFonts.roboto(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w300)
-                              ),
+                              subtitle: Text(
+                                  DateFormat("HH:mm dd-MMM-yyyy")
+                                      .format(DateTime.parse(element.dateTime)),
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w300)),
                               children: [
                                 ListTile(
                                   title: Table(
                                     columnWidths: const <int, TableColumnWidth>{
-                                      0: FlexColumnWidth(0.2),
+                                      0: FlexColumnWidth(0.4),
                                       1: FlexColumnWidth(0.7),
-
                                     },
                                     defaultVerticalAlignment:
                                         TableCellVerticalAlignment.middle,
                                     children: <TableRow>[
+                                      TableRow(
+                                        children: <Widget>[
+                                          TableCell(
+                                            verticalAlignment:
+                                            TableCellVerticalAlignment.top,
+                                            child: Container(
+                                              height: 25,
+                                              width: 32,
+                                              color: Colors.transparent,
+                                              child: Text("Asset Name:",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .subtitle2),
+                                            ),
+                                          ),
+                                          TableCell(
+                                            verticalAlignment:
+                                            TableCellVerticalAlignment.top,
+                                            child: Container(
+                                              height: 25,
+                                              width: 32,
+                                              color: Colors.transparent,
+                                              child: Text(element.asset,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText2),
+                                            ),
+                                          )
+                                        ],
+                                      ), // Asset Name
                                       TableRow(
                                         children: <Widget>[
                                           TableCell(
@@ -297,10 +328,10 @@ class _AlertsScreen extends State<AlertsScreen> {
                                               height: 25,
                                               width: 32,
                                               color: Colors.transparent,
-                                              child: Text("Asset Class",
+                                              child: Text("Class:",
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .bodyText2
+                                                      .subtitle2
                                                   //GoogleFonts.roboto(
                                                   //    fontSize: 14,
                                                   //    fontWeight:
@@ -318,11 +349,11 @@ class _AlertsScreen extends State<AlertsScreen> {
                                               child: Text(element.assetClass,
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .subtitle2),
+                                                      .bodyText2),
                                             ),
                                           )
                                         ],
-                                      ),
+                                      ), //Asset Class
                                       TableRow(
                                         decoration: const BoxDecoration(
                                           color: Colors.transparent,
@@ -335,10 +366,10 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                 height: 25,
                                                 width: 32,
                                                 color: Colors.transparent,
-                                                child: Text("Asset Type",
+                                                child: Text("Type:",
                                                     style: Theme.of(context)
                                                         .textTheme
-                                                        .bodyText2)),
+                                                        .subtitle2)),
                                           ),
                                           TableCell(
                                             verticalAlignment:
@@ -350,40 +381,11 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                 child: Text(element.assetType,
                                                     style: Theme.of(context)
                                                         .textTheme
-                                                        .subtitle2)),
+                                                        .bodyText2)),
                                           )
                                         ],
-                                      ),
-                                      TableRow(
-                                        children: <Widget>[
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: Text("Asset Name",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText2),
-                                            ),
-                                          ),
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: Text(element.asset,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .subtitle2),
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                      ),//Asset Type
+
                                       if (element.sensorId != null) ...[
                                         TableRow(
                                           decoration: const BoxDecoration(
@@ -398,10 +400,10 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                   height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
-                                                  child: Text("Sensor Id",
+                                                  child: Text("Sensor Id:",
                                                       style: Theme.of(context)
                                                           .textTheme
-                                                          .bodyText2)),
+                                                          .subtitle2)),
                                             ),
                                             TableCell(
                                               verticalAlignment:
@@ -414,10 +416,10 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                   child: Text(element.sensorId,
                                                       style: Theme.of(context)
                                                           .textTheme
-                                                          .subtitle2)),
+                                                          .bodyText2)),
                                             )
                                           ],
-                                        )
+                                        ) //sensor ID
                                       ],
                                       if (element.messageText != null) ...[
                                         TableRow(
@@ -427,32 +429,34 @@ class _AlertsScreen extends State<AlertsScreen> {
                                           children: <Widget>[
                                             TableCell(
                                               verticalAlignment:
-                                              TableCellVerticalAlignment
-                                                  .top,
+                                                  TableCellVerticalAlignment
+                                                      .top,
                                               child: Container(
                                                   height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
-                                                  child: Text("Alert Description",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText2)),
-                                            ),
-                                            TableCell(
-                                              verticalAlignment:
-                                              TableCellVerticalAlignment
-                                                  .top,
-                                              child: Container(
-                                                  height: 25,
-                                                  width: 32,
-                                                  color: Colors.transparent,
-                                                  child: Text(element.messageText,
+                                                  child: Text(
+                                                      "Alert Description:",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .subtitle2)),
+                                            ),
+                                            TableCell(
+                                              verticalAlignment:
+                                                  TableCellVerticalAlignment
+                                                      .top,
+                                              child: Container(
+                                                  height: 25,
+                                                  width: 32,
+                                                  color: Colors.transparent,
+                                                  child: Text(
+                                                      element.messageText,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyText2)),
                                             )
                                           ],
-                                        )
+                                        ) //Alert Description
                                       ],
                                       TableRow(
                                         children: <Widget>[
@@ -463,10 +467,10 @@ class _AlertsScreen extends State<AlertsScreen> {
                                               height: 25,
                                               width: 32,
                                               color: Colors.transparent,
-                                              child: Text("Manufacturer",
+                                              child: Text("Manufacturer:",
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .bodyText2),
+                                                      .subtitle2),
                                             ),
                                           ),
                                           TableCell(
@@ -489,11 +493,11 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                       .toString(),
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .subtitle2),
+                                                      .bodyText2),
                                             ),
                                           )
                                         ],
-                                      ),
+                                      ), //Manufacturer
                                       TableRow(
                                         children: <Widget>[
                                           TableCell(
@@ -503,7 +507,6 @@ class _AlertsScreen extends State<AlertsScreen> {
                                               height: 25,
                                               width: 32,
                                               color: Colors.transparent,
-
                                             ),
                                           ),
                                           TableCell(
@@ -511,42 +514,63 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                 TableCellVerticalAlignment.top,
                                             child: Container(
                                               width: 1,
-                                              margin: EdgeInsets.only(bottom: 10),
+                                              margin:
+                                                  EdgeInsets.only(bottom: 10),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                              /*  margin: EdgeInsets.only(bottom: 10),
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  /*  margin: EdgeInsets.only(bottom: 10),
                                                 alignment: Alignment.centerRight,
                                                 height: 25,
                                                // width: 32,
                                                 color: Colors.transparent, */
-                                                children: [
-                                                  Text("Alarm History: ",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText2!.copyWith(fontWeight: FontWeight.w300, fontSize: 14, color: Colors.black26)),
-
-                                                IconButton(
-                                                  alignment: Alignment.centerRight,
-                                                  icon: Icon(Icons.history_outlined, color: Colors.black26,),
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute<void>(
-                                                        builder: (BuildContext context) => AlertHistoryScreen(
-                                                            site: element.site,
-                                                            asset: element.asset,
-                                                            client: client),
-                                                      //  fullscreenDialog: true,
+                                                  children: [
+                                                    Text("Alarm History: ",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText2!
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                fontSize: 14,
+                                                                color: Colors
+                                                                    .black26)),
+                                                    IconButton(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      icon: Icon(
+                                                        Icons.history_outlined,
+                                                        color: Colors.black26,
                                                       ),
-                                                    );
-                                                  },
-                                                ),
-                                              ]
-                                              ),
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute<
+                                                              void>(
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                SiteAlertsScreen(
+                                                                    site: element
+                                                                        .site,
+                                                                    messages: messages
+                                                                        .where((element) =>
+                                                                            element.site ==
+                                                                            site)
+                                                                        .toList(),
+                                                                    client:
+                                                                        client,
+                                                                update:update),
+                                                            //  fullscreenDialog: true,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ]),
                                             ),
                                           )
                                         ],
-                                      )
+                                      ) //History Button
                                     ],
                                   ),
                                 )
@@ -558,116 +582,150 @@ class _AlertsScreen extends State<AlertsScreen> {
               List<Site> enabledSites, List<AlarmMessagePayload> messages) {
             print("getting the sites....");
 
-            return ListView.builder(
+            return GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:2, childAspectRatio: 1.8),
+
                 shrinkWrap: true,
+                clipBehavior: Clip.hardEdge,
                 itemCount: enabledSites.length,
                 itemBuilder: (context, index) {
                   var site = enabledSites[index];
 
-                  // Site container background clapham
                   print("adding a site to the list...");
 
                   //Container for each site being added
-                  return Neumorphic(
-                      margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                      padding: EdgeInsets.all(10),
-                      style: NeumorphicStyle(
-                          shape: NeumorphicShape.flat,
-                          border: NeumorphicBorder(
-                            color: messages
-                                    .where((message) =>
-                                        message.site == site.name &&
-                                        message.status == 'Active')
-                                    .toList()
-                                    .isEmpty
-                                ? Colors.transparent
-                                : Colors.red.withOpacity(0.3),
-                            width: site.expanded == false ? 1 : 0,
+                  return GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<
+                              void>(
+                            builder: (BuildContext
+                            context) =>
+                                SiteAlertsScreen(
+                                    site: site.name,
+                                    messages: messages
+                                        .where((element) =>
+                                    element.site ==
+                                        site.name)
+                                        .toList(),
+                                    client:
+                                    client,
+                                    update:update),
+                            //  fullscreenDialog: true,
                           ),
-                          boxShape: NeumorphicBoxShape.roundRect(
-                              BorderRadius.circular(12)),
-                          depth: site.expanded == false ? 3 : 5,
-                          lightSource: LightSource.topLeft,
-                          color: site.expanded == false
-                              ? Colors.white
-                              : Colors.white
+                        );
+                  },
+                  child:
+                  Center(
+                    child: Neumorphic(
+                        margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        padding: EdgeInsets.all(10),
+                        style: NeumorphicStyle(
+                            shape: NeumorphicShape.flat,
+                            border: NeumorphicBorder(
+                              color: messages
+                                      .where((message) =>
+                                          message.site == site.name &&
+                                          message.status == 'Active')
+                                      .toList()
+                                      .isEmpty
+                                  ? Colors.transparent
+                                  : Colors.red.withOpacity(0.3),
+                              width: site.expanded == false ? 1 : 0,
+                            ),
+                            boxShape: NeumorphicBoxShape.roundRect(
+                                BorderRadius.circular(12)),
+                            depth: site.expanded == false ? 3 : 5,
+                            lightSource: LightSource.topLeft,
+                            color: site.expanded == false
+                                ? Colors.white
+                                : Colors.white
 
-                          //padding: const EdgeInsets.all(0.0),
-                          // decoration: BoxDecoration(
+                            //padding: const EdgeInsets.all(0.0),
+                            // decoration: BoxDecoration(
 
-                          //color: site.expanded==false ? Colors.white :  Colors.white,
-                          //  border: Border(
-                          //      right: BorderSide(color: site.expanded==false ? Colors.red: Colors.transparent, width: 5),
-                          //    left: BorderSide(color: site.expanded==false ? Colors.red: Colors.transparent, width: 5))
-
-                          ),
-                      child: Theme(
-                          data: Theme.of(context)
-                              .copyWith(dividerColor: Colors.transparent),
-                          child: ExpansionTile(
-                            tilePadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                            childrenPadding: EdgeInsets.zero,
-                            collapsedTextColor: Colors.black,
-                            textColor: Colors.black,
-                            onExpansionChanged: (value) => {
-                              setState(() {
-                                site.expanded = value;
-                              })
-                            },
-                            //messages.where((site) => site.name).length.toString()
-                            title: Text(
-                              site.name,
-                              style: GoogleFonts.roboto(
-                                  fontSize: 20, fontWeight: site.expanded == false
-                                  ? FontWeight.w300
-                                  : FontWeight.w500),
+                            //color: site.expanded==false ? Colors.white :  Colors.white,
+                            //  border: Border(
+                            //      right: BorderSide(color: site.expanded==false ? Colors.red: Colors.transparent, width: 5),
+                            //    left: BorderSide(color: site.expanded==false ? Colors.red: Colors.transparent, width: 5))
 
                             ),
-                            subtitle: Row(children: [
-                              Text(
-                                messages
-                                        .where((message) =>
-                                            message.site == site.name &&
-                                            message.status == 'Active')
-                                        .toList()
-                                        .length
-                                        .toString() +
-                                    " Active"
-
-                                //data.entries.where(() => site.name) + " alarms"
-                                ,
-                                style: GoogleFonts.roboto(
-                                    fontSize: 16,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.w300),
-                              ),
-                              Text(
-                                "  " +
-                                    messages
-                                        .where((message) =>
-                                            message.site == site.name &&
-                                            message.status == 'Inactive')
-                                        .toList()
-                                        .length
-                                        .toString() +
-                                    " inactive"
-
-                                //data.entries.where(() => site.name) + " alarms"
-                                ,
-                                style: GoogleFonts.roboto(
-                                    fontSize: 16,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.w300),
-                                //TextStyle(color: Colors.red, fontSize: 16, ),
-                                //Theme.of(context).textTheme.bodyText2,
-                              )
-                            ]),
-
-                            children: [
+                        child: Theme(
+                            data: Theme.of(context)
+                                .copyWith(dividerColor: Colors.transparent),
+                            child:
                               Container(
-                                  child: _getMessages(site.name, messages))
-                            ],
-                          )));
+                              height: 100,
+                              padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                              //messages.where((site) => site.name).length.toString()
+                              child: Column(
+                                  children:[
+                              Row(children:[
+                                   Text(
+
+                                site.name.toString().substring(0, 5), // I know it's not the right way but it's quick, TODO: actually pull the site ID
+                                     style: GoogleFonts.roboto(
+                                    fontSize: 12,
+                                    fontWeight:  FontWeight.w300
+                                        ),
+                              )]),
+                                    Row(children:[
+                                      Text(
+
+                                        site.name.toString().substring(7,), // TODO:
+                                        style: GoogleFonts.roboto(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w500),
+                                      )]),
+                               Row(
+
+                                   children: [
+                                Text(
+                                  messages
+                                          .where((message) =>
+                                              message.site == site.name &&
+                                              message.status == 'Active')
+                                          .toList()
+                                          .length
+                                          .toString() +
+                                      " Active"
+
+                                  //data.entries.where(() => site.name) + " alarms"
+                                  ,
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 16,
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                Text(
+                                  "  " +
+                                      messages
+                                          .where((message) =>
+                                              message.site == site.name &&
+                                              message.status == 'Inactive')
+                                          .toList()
+                                          .length
+                                          .toString() +
+                                      " inactive"
+
+                                  //data.entries.where(() => site.name) + " alarms"
+                                  ,
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 16,
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.w300),
+                                  //TextStyle(color: Colors.red, fontSize: 16, ),
+                                  //Theme.of(context).textTheme.bodyText2,
+                                )
+                              ]),
+
+
+                            ]))
+
+
+                        )),
+                  ));
                 });
           }
 
