@@ -353,7 +353,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                            height: 25,
                                            width: 32,
                                            color: Colors.transparent,
-                                           child: Text("Asset Type",
+                                           child: Text("Asset Type:",
                                                style: Theme.of(context)
                                                    .textTheme
                                                    .bodyText2)),
@@ -416,7 +416,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                              height: 25,
                                              width: 32,
                                              color: Colors.transparent,
-                                             child: Text("Sensor Id",
+                                             child: Text("Sensor Id:",
                                                  style: Theme.of(context)
                                                      .textTheme
                                                      .bodyText2)),
@@ -483,7 +483,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                          height: 25,
                                          width: 32,
                                          color: Colors.transparent,
-                                         child: Text("Manufacturer",
+                                         child: Text("Manufacturer:",
                                              style: Theme.of(context)
                                                  .textTheme
                                                  .bodyText2),
