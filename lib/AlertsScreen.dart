@@ -1,4 +1,5 @@
 import 'package:accordion/accordion.dart';
+import 'package:alerts/SiteAlertsScreen.dart';
 import 'package:alerts/main.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/cupertino.dart';
@@ -272,18 +273,18 @@ class _AlertsScreen extends State<AlertsScreen> {
                                       ?.copyWith(fontSize: 19),
                                 )
                               ]),
-                              subtitle: Text(DateFormat("HH:mm dd-MMM-yyyy")
-                                  .format(DateTime.parse(element.dateTime)), style: GoogleFonts.roboto(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w300)
-                              ),
+                              subtitle: Text(
+                                  DateFormat("HH:mm dd-MMM-yyyy")
+                                      .format(DateTime.parse(element.dateTime)),
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w300)),
                               children: [
                                 ListTile(
                                   title: Table(
                                     columnWidths: const <int, TableColumnWidth>{
                                       0: FlexColumnWidth(0.2),
                                       1: FlexColumnWidth(0.7),
-
                                     },
                                     defaultVerticalAlignment:
                                         TableCellVerticalAlignment.middle,
@@ -427,26 +428,28 @@ class _AlertsScreen extends State<AlertsScreen> {
                                           children: <Widget>[
                                             TableCell(
                                               verticalAlignment:
-                                              TableCellVerticalAlignment
-                                                  .top,
+                                                  TableCellVerticalAlignment
+                                                      .top,
                                               child: Container(
                                                   height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
-                                                  child: Text("Alert Description",
+                                                  child: Text(
+                                                      "Alert Description",
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .bodyText2)),
                                             ),
                                             TableCell(
                                               verticalAlignment:
-                                              TableCellVerticalAlignment
-                                                  .top,
+                                                  TableCellVerticalAlignment
+                                                      .top,
                                               child: Container(
                                                   height: 25,
                                                   width: 32,
                                                   color: Colors.transparent,
-                                                  child: Text(element.messageText,
+                                                  child: Text(
+                                                      element.messageText,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .subtitle2)),
@@ -503,7 +506,6 @@ class _AlertsScreen extends State<AlertsScreen> {
                                               height: 25,
                                               width: 32,
                                               color: Colors.transparent,
-
                                             ),
                                           ),
                                           TableCell(
@@ -511,38 +513,59 @@ class _AlertsScreen extends State<AlertsScreen> {
                                                 TableCellVerticalAlignment.top,
                                             child: Container(
                                               width: 1,
-                                              margin: EdgeInsets.only(bottom: 10),
+                                              margin:
+                                                  EdgeInsets.only(bottom: 10),
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.end,
-                                              /*  margin: EdgeInsets.only(bottom: 10),
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  /*  margin: EdgeInsets.only(bottom: 10),
                                                 alignment: Alignment.centerRight,
                                                 height: 25,
                                                // width: 32,
                                                 color: Colors.transparent, */
-                                                children: [
-                                                  Text("Alarm History: ",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText2!.copyWith(fontWeight: FontWeight.w300, fontSize: 14, color: Colors.black26)),
-
-                                                IconButton(
-                                                  alignment: Alignment.centerRight,
-                                                  icon: Icon(Icons.history_outlined, color: Colors.black26,),
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute<void>(
-                                                        builder: (BuildContext context) => AlertHistoryScreen(
-                                                            site: element.site,
-                                                            asset: element.asset,
-                                                            client: client),
-                                                      //  fullscreenDialog: true,
+                                                  children: [
+                                                    Text("Alarm History: ",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .bodyText2!
+                                                            .copyWith(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                fontSize: 14,
+                                                                color: Colors
+                                                                    .black26)),
+                                                    IconButton(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      icon: Icon(
+                                                        Icons.history_outlined,
+                                                        color: Colors.black26,
                                                       ),
-                                                    );
-                                                  },
-                                                ),
-                                              ]
-                                              ),
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute<
+                                                              void>(
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                SiteAlertsScreen(
+                                                                    site: element
+                                                                        .site,
+                                                                    messages: messages
+                                                                        .where((element) =>
+                                                                            element.site ==
+                                                                            site)
+                                                                        .toList(),
+                                                                    client:
+                                                                        client,
+                                                                update:update),
+                                                            //  fullscreenDialog: true,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ]),
                                             ),
                                           )
                                         ],
@@ -568,7 +591,30 @@ class _AlertsScreen extends State<AlertsScreen> {
                   print("adding a site to the list...");
 
                   //Container for each site being added
-                  return Neumorphic(
+                  return new GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute<
+                              void>(
+                            builder: (BuildContext
+                            context) =>
+                                SiteAlertsScreen(
+                                    site: site.name,
+                                    messages: messages
+                                        .where((element) =>
+                                    element.site ==
+                                        site.name)
+                                        .toList(),
+                                    client:
+                                    client,
+                                    update:update),
+                            //  fullscreenDialog: true,
+                          ),
+                        );
+                  },
+                  child:
+                  Neumorphic(
                       margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
                       padding: EdgeInsets.all(10),
                       style: NeumorphicStyle(
@@ -604,26 +650,25 @@ class _AlertsScreen extends State<AlertsScreen> {
                       child: Theme(
                           data: Theme.of(context)
                               .copyWith(dividerColor: Colors.transparent),
-                          child: ExpansionTile(
-                            tilePadding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                            childrenPadding: EdgeInsets.zero,
-                            collapsedTextColor: Colors.black,
-                            textColor: Colors.black,
-                            onExpansionChanged: (value) => {
-                              setState(() {
-                                site.expanded = value;
-                              })
-                            },
+                          child:
+                  Container(
+                            padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
                             //messages.where((site) => site.name).length.toString()
-                            title: Text(
+                            child: Column(
+                                children:[
+                            Row(children:[
+                                 Text(
+
                               site.name,
                               style: GoogleFonts.roboto(
-                                  fontSize: 20, fontWeight: site.expanded == false
-                                  ? FontWeight.w300
-                                  : FontWeight.w500),
+                                  fontSize: 20,
+                                  fontWeight: site.expanded == false
+                                      ? FontWeight.w300
+                                      : FontWeight.w500),
+                            )]),
+                             Row(
 
-                            ),
-                            subtitle: Row(children: [
+                                 children: [
                               Text(
                                 messages
                                         .where((message) =>
@@ -663,11 +708,11 @@ class _AlertsScreen extends State<AlertsScreen> {
                               )
                             ]),
 
-                            children: [
-                              Container(
-                                  child: _getMessages(site.name, messages))
-                            ],
-                          )));
+
+                          ]))
+
+
+                      )));
                 });
           }
 
