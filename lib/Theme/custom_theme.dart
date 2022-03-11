@@ -48,7 +48,7 @@ class CustomTheme {
         primaryColor: Color(0xFF136d1b),
         //primaryColor: Color(0xFF25b432),
         fontFamily: 'Roboto',
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: Color(0xfff6f6f6),
         textTheme: TextTheme(
 
           headline1: GoogleFonts.roboto(

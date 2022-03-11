@@ -87,7 +87,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
 
             },
           ),
-          toolbarHeight: 150,
+          toolbarHeight: 80,
           title:  Container(
             child: Container(
               // DefaultTextStyle: TextStyle(color: Colors.red),
@@ -95,7 +95,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
               child:
               Table(
                 columnWidths: const <int, TableColumnWidth>{
-                  0: FlexColumnWidth(0.2),
+                  0: FlexColumnWidth(0.3),
                   1: FlexColumnWidth(0.7),
 
                 },
@@ -300,7 +300,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                            ListTile(
                              title: Table(
                                columnWidths: const <int, TableColumnWidth>{
-                                 0: FlexColumnWidth(0.2),
+                                 0: FlexColumnWidth(0.3),
                                  1: FlexColumnWidth(0.7),
                                },
                                defaultVerticalAlignment:
@@ -318,7 +318,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                          child: Text("Asset Class",
                                              style: Theme.of(context)
                                                  .textTheme
-                                                 .bodyText2
+                                                 .subtitle2
                                            //GoogleFonts.roboto(
                                            //    fontSize: 14,
                                            //    fontWeight:
@@ -336,7 +336,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                          child: Text(element.assetClass,
                                              style: Theme.of(context)
                                                  .textTheme
-                                                 .subtitle2),
+                                                 .bodyText2),
                                        ),
                                      )
                                    ],
@@ -356,7 +356,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                            child: Text("Asset Type:",
                                                style: Theme.of(context)
                                                    .textTheme
-                                                   .bodyText2)),
+                                                   .subtitle2)),
                                      ),
                                      TableCell(
                                        verticalAlignment:
@@ -368,7 +368,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                            child: Text(element.assetType,
                                                style: Theme.of(context)
                                                    .textTheme
-                                                   .subtitle2)),
+                                                   .bodyText2)),
                                      )
                                    ],
                                  ),
@@ -384,7 +384,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                          child: Text("Asset Name",
                                              style: Theme.of(context)
                                                  .textTheme
-                                                 .bodyText2),
+                                                 .subtitle2),
                                        ),
                                      ),
                                      TableCell(
@@ -397,7 +397,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                          child: Text(element.asset,
                                              style: Theme.of(context)
                                                  .textTheme
-                                                 .subtitle2),
+                                                 .bodyText2),
                                        ),
                                      )
                                    ],
@@ -419,7 +419,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                              child: Text("Sensor Id:",
                                                  style: Theme.of(context)
                                                      .textTheme
-                                                     .bodyText2)),
+                                                     .subtitle2)),
                                        ),
                                        TableCell(
                                          verticalAlignment:
@@ -432,7 +432,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                              child: Text(element.sensorId,
                                                  style: Theme.of(context)
                                                      .textTheme
-                                                     .subtitle2)),
+                                                     .bodyText2)),
                                        )
                                      ],
                                    )
@@ -455,7 +455,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                                  "Alert Description",
                                                  style: Theme.of(context)
                                                      .textTheme
-                                                     .bodyText2)),
+                                                     .subtitle2)),
                                        ),
                                        TableCell(
                                          verticalAlignment:
@@ -469,7 +469,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                                  element.messageText,
                                                  style: Theme.of(context)
                                                      .textTheme
-                                                     .subtitle2)),
+                                                     .bodyText2)),
                                        )
                                      ],
                                    )
@@ -486,7 +486,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                          child: Text("Manufacturer:",
                                              style: Theme.of(context)
                                                  .textTheme
-                                                 .bodyText2),
+                                                 .subtitle2),
                                        ),
                                      ),
                                      TableCell(
@@ -509,7 +509,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                                  .toString(),
                                              style: Theme.of(context)
                                                  .textTheme
-                                                 .subtitle2),
+                                                 .bodyText2),
                                        ),
                                      )
                                    ],

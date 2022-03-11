@@ -118,7 +118,7 @@ class _AlertHistoryScreen extends State<AlertHistoryScreen> {
               child:
               Table(
                 columnWidths: const <int, TableColumnWidth>{
-                  0: FlexColumnWidth(0.2),
+                  0: FlexColumnWidth(0.3),
                   1: FlexColumnWidth(0.7),
 
                 },
