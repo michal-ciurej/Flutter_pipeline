@@ -85,7 +85,7 @@ class _AlertsScreen extends State<AlertsScreen> {
               .toList();
 
           //filter out any alerts where the site is not monitored
-          var messages = data.entries
+          var messages = Provider.of<AppMessages>(context).entries
               .where((element) => enabledSites
                   .where((site) =>
                       //logic deciding when a site is alarmed but acknowledged... I think

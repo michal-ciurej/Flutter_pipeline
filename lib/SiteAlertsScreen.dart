@@ -135,7 +135,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
         ),
         body: Consumer<AppMessages>(builder: (context, data, _) {
           messages.clear();
-          messages = data.entries
+          messages = Provider.of<AppMessages>(context).entries
               .where((element) =>
           element.site ==
               site)
