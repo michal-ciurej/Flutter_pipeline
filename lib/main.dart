@@ -36,12 +36,11 @@ import 'SiteDraw.dart';
 import 'Theme/custom_theme.dart';
 import 'Ticket.dart';
 
-
 late var serverAddress;
 //remote debugging
 var protocol = 'https';
 var socketProtocol = 'wss';
-var port=':443/landscaper-service';
+var port = ':8443/landscaper-service';
 
 //local environment
 /*var protocol = 'http';
