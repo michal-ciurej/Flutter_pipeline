@@ -39,6 +39,16 @@ class _AssetsView extends State<AssetsView> {
   var toPrint = [];
 
   @override
+
+  @override
+  void initState() {
+
+
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     int count;
 

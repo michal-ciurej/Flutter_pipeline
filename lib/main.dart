@@ -20,6 +20,7 @@ import 'package:stomp_dart_client/stomp_frame.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'AddAsset.dart';
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
 import 'AssetsView.dart';
@@ -30,7 +31,7 @@ import 'HeatMap.dart';
 import 'LoginScreen.dart';
 import 'NfcManager.dart';
 import 'ScanPage.dart';
-import 'Settings.dart';
+import 'SettingsRepository.dart';
 import 'Site.dart';
 import 'SiteDraw.dart';
 import 'Theme/custom_theme.dart';
@@ -40,15 +41,18 @@ late var serverAddress;
 //remote debugging
 var protocol = 'https';
 var socketProtocol = 'wss';
-var port = ':8443/landscaper-service';
-
+var port = ':443/landscaper-service';
+var fabInRail = false;
+var fabMode='addAsset';
+late var token;
 //local environment
-/*var protocol = 'http';
-var socketProtocol = 'ws';
-var port=':8080';
-*/
+//var protocol = 'http';
+//var socketProtocol = 'ws';
+//var port=':8080';
+
 
 void onConnect(StompFrame frame) {
+
   stompClient.subscribe(
     destination: '/topic/messages',
     callback: (frame) {
@@ -369,8 +373,16 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
 
     void _onItemTapped(int index) {
-      print(index);
       setState(() {
+       if(_children[index].runtimeType == AssetsView){
+         fabInRail=true;
+         fabMode="addAsset";
+       }else{
+         fabInRail=false;
+         fabMode="addAsset";
+       }
+
+
         _currentIndex = index;
       });
     }
@@ -388,10 +400,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     int _destinationCount = _allDestinations.length;
-    bool _fabInRail = false;
+
     bool _includeBaseDestinationsInMenu = true;
 
     return AdaptiveNavigationScaffold(
+        floatingActionButton:fabInRail ? getActionButtong(context):null,
       navigationTypeResolver: (context) {
         if (MediaQuery
             .of(context)
@@ -450,7 +463,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ]
           ],
           backgroundColor: Colors.white,
-          
           toolbarHeight: 42,
           title: Text('MyBuildings.live', style: GoogleFonts.roboto(fontSize: 12,color: Color(0xFF136d1b), fontWeight: FontWeight.bold)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
@@ -462,44 +474,41 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: TextStyle(color: Colors.white))
           ])),
       body: _children[_currentIndex],
-      fabInRail: _fabInRail,
+      fabInRail: false,
       includeBaseDestinationsInMenu: _includeBaseDestinationsInMenu,
-    ); /*Scaffold(
-                  drawer: siteDraw(),
-                  bottomNavigationBar: BottomNavigationBar(
-                    items: const <BottomNavigationBarItem>[
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.home),
-                        label: 'Alerts',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.travel_explore),
-                        label: 'Heat Map',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.work),
-                        label: 'My Cases',
-                      ),
-                    ],
-                    currentIndex: _currentIndex,
-                    selectedItemColor: Colors.amber[800],
-                    onTap: _onItemTapped,
-                  ),
-                  appBar: AppBar(
-                    // Here we take the value from the MyHomePage object that was created by
-                    // the App.build method, and use it to set our appbar title.
-                    title: Text(widget.title),
-                  ),
-                  body: LayoutBuilder(
-                      builder: (context, constraints) {
-                        if (constraints.maxWidth > 600) {
-                          return _children[_currentIndex];
-                        } else {
-                          return _children[0];
-                        }
-                      })
-              );*/
+    );
   }
+}
+
+FloatingActionButton getActionButtong(BuildContext context) {
+
+  switch (fabMode) {
+    case "addAsset" :
+      {
+        return FloatingActionButton(
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.domain_add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => AddAsset(
+                      site: sites.sites[1].name,
+                      stompClient: stompClient),
+                  fullscreenDialog: true,
+                ),
+              );
+            });
+      }
+      break;
+    default : {
+      return FloatingActionButton(
+          onPressed: () {
+            // Add your onPressed code here!
+          });
+    }
+  }
+
 }
 
 
