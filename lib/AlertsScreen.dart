@@ -40,6 +40,8 @@ class _AlertsScreen extends State<AlertsScreen> {
   @override
   void initState() {
     super.initState();
+
+
   }
 
   @override
@@ -99,7 +101,6 @@ class _AlertsScreen extends State<AlertsScreen> {
                   .isNotEmpty)
               .toList();
 
-          // messages.where((Clapham) => true).length.toString()
 
           //filter out any alers where the type is not monitored
           messages = messages
@@ -114,472 +115,10 @@ class _AlertsScreen extends State<AlertsScreen> {
                 .toList();
           }
 
-          void _doNothing(BuildContext context) {}
 
-          Widget _getMessages(String site, List<AlarmMessagePayload> messages) {
-            print("getting messages ...");
-            var elements =
-                messages.where((message) => message.site == site).toList();
-            //var currentTime = messages.DateTime;
-            //DateFormat.jm().format(DateTime.now());
-
-            ScrollController scrollController = ScrollController(
-              initialScrollOffset: 10, // or whatever offset you wish
-              keepScrollOffset: true,
-            );
-
-            return ListView.builder(
-                shrinkWrap: true,
-                controller: scrollController,
-                itemCount: elements.length,
-                itemBuilder: (context, index) {
-                  var element = elements[index];
-                  print("returning a message ..." + element.id);
-                  return Neumorphic(
-                      // padding:EdgeInsets.fromLTRB(20, 5, 20, 5),
-                      margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                      style: NeumorphicStyle(
-                          shape: NeumorphicShape.flat,
-                          boxShape: NeumorphicBoxShape.roundRect(
-                              BorderRadius.circular(12)),
-                          depth: 3,
-                          lightSource: LightSource.topLeft,
-                          color: Colors.white,
-                          border: NeumorphicBorder(
-                            color: (element.status == 'Active' &&
-                                    element.ack
-                                            .toString()
-                                            .toUpperCase()
-                                            .compareTo("FALSE") ==
-                                        0)
-                                ? Colors.red
-                                : (element.status == 'Active' &&
-                                        element.ack
-                                                .toString()
-                                                .toUpperCase()
-                                                .compareTo("FALSE") !=
-                                            0)
-                                    ? Color(0xffa3a3a3)
-                                    : Colors.green,
-                            width: 2,
-                          )),
-
-                      // decoration: BoxDecoration(
-                      //     color: Colors.white,
-                      //     border: Border(
-                      //         right: BorderSide(color: element.status=='Active' ? Colors.red: Colors.lightGreen, width: 5),
-                      //         left: BorderSide(
-                      //
-                      //
-                      //
-                      //
-                      //             color: element.status=='Active' ? Colors.red: Colors.lightGreen, width: 5))),
-                      child: Slidable(
-                          // Specify a key if the Slidable is dismissible.
-                          key: ValueKey(messages.indexOf(element)),
-
-                          // The start action pane is the one at the left or the top side.
-                          startActionPane: ActionPane(
-                            // A motion is a widget used to control how the pane animates.
-                            motion: const ScrollMotion(),
-                            //check here
-
-                            // A pane can dismiss the Slidable.
-                            //  dismissible: DismissiblePane(
-                            //    onDismissed: () {}),
-
-                            // All actions are defined in the children parameter.
-
-                            children: [
-                              // A SlidableAction can have an icon and/or a label.
-                              if (element.ack == 'false') ...[
-                                SlidableAction(
-                                  onPressed: (BuildContext context) =>
-                                      {update(element.id)},
-                                  backgroundColor: Color(0xff595959),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.task_alt_outlined,
-                                  label: 'Acknowledge',
-                                )
-                              ] else ...[
-                                SlidableAction(
-                                  onPressed: (BuildContext context) => {},
-                                  backgroundColor: Color(0xff595959),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.close_outlined,
-                                  label: 'Acknowledged',
-                                )
-                              ]
-                            ],
-                          ),
-
-                          // The end action pane is the one at the right or the bottom side.
-                          endActionPane:
-                              !userDetails.featureToggles.contains("ticket")
-                                  ? null
-                                  : const ActionPane(
-                                      motion: ScrollMotion(),
-                                      children: [
-                                        SlidableAction(
-                                          // An action can be bigger than the others.
-                                          flex: 2,
-                                          onPressed: doNothing,
-                                          backgroundColor: Color(0xFF7BC043),
-                                          foregroundColor: Colors.white,
-                                          icon: Icons.archive,
-                                          label: 'Archive',
-                                        ),
-                                      ],
-                                    ),
-
-                          // The child of the Slidable is what the user sees when the
-                          // component is not dragged.
-                          // Site Container Clapham
-                          child: ExpansionTile(
-                              tilePadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-                              //margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                              //  tilePadding: EdgeInsets.zero,
-                              //  childrenPadding: EdgeInsets.zero,
-                              onExpansionChanged: (value) => {
-                                    setState(() {
-                                      //site.expanded = value;
-                                    })
-                                  },
-                              title: Row(children: [
-                                Icon(
-                                  Icons.notifications,
-                                  color: (element.status == 'Active' &&
-                                          element.ack
-                                                  .toString()
-                                                  .toUpperCase()
-                                                  .compareTo("FALSE") ==
-                                              0)
-                                      ? Colors.red
-                                      : (element.status == 'Active' &&
-                                              element.ack
-                                                      .toString()
-                                                      .toUpperCase()
-                                                      .compareTo("FALSE") !=
-                                                  0)
-                                          ? Color(0xff595959)
-                                          : Colors.green,
-                                  size: 35.0,
-                                ),
-                                Text(
-                                  "  " + element.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .subtitle2
-                                      ?.copyWith(fontSize: 19),
-                                )
-                              ]),
-                              subtitle: Text(
-                                  DateFormat("HH:mm dd-MMM-yyyy")
-                                      .format(DateTime.parse(element.dateTime)),
-                                  style: GoogleFonts.roboto(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w300)),
-                              children: [
-                                ListTile(
-                                  title: Table(
-                                    columnWidths: const <int, TableColumnWidth>{
-                                      0: FlexColumnWidth(0.4),
-                                      1: FlexColumnWidth(0.7),
-                                    },
-                                    defaultVerticalAlignment:
-                                        TableCellVerticalAlignment.middle,
-                                    children: <TableRow>[
-                                      TableRow(
-                                        children: <Widget>[
-                                          TableCell(
-                                            verticalAlignment:
-                                            TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: Text("Asset Name:",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .subtitle2),
-                                            ),
-                                          ),
-                                          TableCell(
-                                            verticalAlignment:
-                                            TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: Text(element.asset,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText2),
-                                            ),
-                                          )
-                                        ],
-                                      ), // Asset Name
-                                      TableRow(
-                                        children: <Widget>[
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: Text("Class:",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .subtitle2
-                                                  //GoogleFonts.roboto(
-                                                  //    fontSize: 14,
-                                                  //    fontWeight:
-                                                  //    FontWeight.w200)
-                                                  ),
-                                            ),
-                                          ),
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: Text(element.assetClass,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText2),
-                                            ),
-                                          )
-                                        ],
-                                      ), //Asset Class
-                                      TableRow(
-                                        decoration: const BoxDecoration(
-                                          color: Colors.transparent,
-                                        ),
-                                        children: <Widget>[
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                                height: 25,
-                                                width: 32,
-                                                color: Colors.transparent,
-                                                child: Text("Type:",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .subtitle2)),
-                                          ),
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                                height: 25,
-                                                width: 32,
-                                                color: Colors.transparent,
-                                                child: Text(element.assetType,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyText2)),
-                                          )
-                                        ],
-                                      ),//Asset Type
-
-                                      if (element.sensorId != null) ...[
-                                        TableRow(
-                                          decoration: const BoxDecoration(
-                                            color: Colors.transparent,
-                                          ),
-                                          children: <Widget>[
-                                            TableCell(
-                                              verticalAlignment:
-                                                  TableCellVerticalAlignment
-                                                      .top,
-                                              child: Container(
-                                                  height: 25,
-                                                  width: 32,
-                                                  color: Colors.transparent,
-                                                  child: Text("Sensor Id:",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .subtitle2)),
-                                            ),
-                                            TableCell(
-                                              verticalAlignment:
-                                                  TableCellVerticalAlignment
-                                                      .top,
-                                              child: Container(
-                                                  height: 25,
-                                                  width: 32,
-                                                  color: Colors.transparent,
-                                                  child: Text(element.sensorId,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText2)),
-                                            )
-                                          ],
-                                        ) //sensor ID
-                                      ],
-                                      if (element.messageText != null) ...[
-                                        TableRow(
-                                          decoration: const BoxDecoration(
-                                            color: Colors.transparent,
-                                          ),
-                                          children: <Widget>[
-                                            TableCell(
-                                              verticalAlignment:
-                                                  TableCellVerticalAlignment
-                                                      .top,
-                                              child: Container(
-                                                  height: 25,
-                                                  width: 32,
-                                                  color: Colors.transparent,
-                                                  child: Text(
-                                                      "Alert Description:",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .subtitle2)),
-                                            ),
-                                            TableCell(
-                                              verticalAlignment:
-                                                  TableCellVerticalAlignment
-                                                      .top,
-                                              child: Container(
-                                                  height: 25,
-                                                  width: 32,
-                                                  color: Colors.transparent,
-                                                  child: Text(
-                                                      element.messageText,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText2)),
-                                            )
-                                          ],
-                                        ) //Alert Description
-                                      ],
-                                      TableRow(
-                                        children: <Widget>[
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: Text("Manufacturer:",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .subtitle2),
-                                            ),
-                                          ),
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                              child: Text(
-                                                  assets.assets
-                                                      .where((asset) => (element
-                                                                  .site ==
-                                                              asset.site &&
-                                                          asset.name ==
-                                                              element.asset))
-                                                      .toList()
-                                                      .map(
-                                                          (e) => e.manufacturer)
-                                                      .toString(),
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyText2),
-                                            ),
-                                          )
-                                        ],
-                                      ), //Manufacturer
-                                      TableRow(
-                                        children: <Widget>[
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              height: 25,
-                                              width: 32,
-                                              color: Colors.transparent,
-                                            ),
-                                          ),
-                                          TableCell(
-                                            verticalAlignment:
-                                                TableCellVerticalAlignment.top,
-                                            child: Container(
-                                              width: 1,
-                                              margin:
-                                                  EdgeInsets.only(bottom: 10),
-                                              child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  /*  margin: EdgeInsets.only(bottom: 10),
-                                                alignment: Alignment.centerRight,
-                                                height: 25,
-                                               // width: 32,
-                                                color: Colors.transparent, */
-                                                  children: [
-                                                    Text("Alarm History: ",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyText2!
-                                                            .copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w300,
-                                                                fontSize: 14,
-                                                                color: Colors
-                                                                    .black26)),
-                                                    IconButton(
-                                                      alignment:
-                                                          Alignment.centerRight,
-                                                      icon: Icon(
-                                                        Icons.history_outlined,
-                                                        color: Colors.black26,
-                                                      ),
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute<
-                                                              void>(
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                SiteAlertsScreen(
-                                                                    site: element
-                                                                        .site,
-                                                                    messages: messages
-                                                                        .where((element) =>
-                                                                            element.site ==
-                                                                            site)
-                                                                        .toList(),
-                                                                    client:
-                                                                        client,
-                                                                update:update),
-                                                            //  fullscreenDialog: true,
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ]),
-                                            ),
-                                          )
-                                        ],
-                                      ) //History Button
-                                    ],
-                                  ),
-                                )
-                              ])));
-                });
-          }
 
           Widget _getSites(
-              List<Site> enabledSites, List<AlarmMessagePayload> messages) {
+              List<Site> enabledSites, List<AlarmMessagePayload> siteMessages, isFilterSwitched) {
             print("getting the sites....");
 
             return GridView.builder(
@@ -590,8 +129,6 @@ class _AlertsScreen extends State<AlertsScreen> {
                 itemCount: enabledSites.length,
                 itemBuilder: (context, index) {
                   var site = enabledSites[index];
-
-                  print("adding a site to the list...");
 
                   //Container for each site being added
                   return GestureDetector(
@@ -604,14 +141,15 @@ class _AlertsScreen extends State<AlertsScreen> {
                             context) =>
                                 SiteAlertsScreen(
                                     site: site.name,
-                                    messages: messages
+                                    siteSpecificMessages: siteMessages
                                         .where((element) =>
                                     element.site ==
                                         site.name)
                                         .toList(),
                                     client:
                                     client,
-                                    update:update),
+                                    update:update,
+                                    isFilterSwitched:isFilterSwitched),
                             //  fullscreenDialog: true,
                           ),
                         );
@@ -624,7 +162,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                         style: NeumorphicStyle(
                             shape: NeumorphicShape.flat,
                             border: NeumorphicBorder(
-                              color: messages
+                              color: siteMessages
                                       .where((message) =>
                                           message.site == site.name &&
                                           message.status == 'Active')
@@ -641,15 +179,6 @@ class _AlertsScreen extends State<AlertsScreen> {
                             color: site.expanded == false
                                 ? Colors.white
                                 : Colors.white
-
-                            //padding: const EdgeInsets.all(0.0),
-                            // decoration: BoxDecoration(
-
-                            //color: site.expanded==false ? Colors.white :  Colors.white,
-                            //  border: Border(
-                            //      right: BorderSide(color: site.expanded==false ? Colors.red: Colors.transparent, width: 5),
-                            //    left: BorderSide(color: site.expanded==false ? Colors.red: Colors.transparent, width: 5))
-
                             ),
                         child: Theme(
                             data: Theme.of(context)
@@ -682,7 +211,7 @@ class _AlertsScreen extends State<AlertsScreen> {
 
                                    children: [
                                 Text(
-                                  messages
+                                  siteMessages
                                           .where((message) =>
                                               message.site == site.name &&
                                               message.status == 'Active')
@@ -700,14 +229,14 @@ class _AlertsScreen extends State<AlertsScreen> {
                                 ),
                                 Text(
                                   "  " +
-                                      messages
+                                      siteMessages
                                           .where((message) =>
                                               message.site == site.name &&
                                               message.status == 'Inactive')
                                           .toList()
                                           .length
                                           .toString() +
-                                      " inactive"
+                                      " Inactive"
 
                                   //data.entries.where(() => site.name) + " alarms"
                                   ,
@@ -729,7 +258,7 @@ class _AlertsScreen extends State<AlertsScreen> {
                 });
           }
 
-          return _getSites(enabledSites, messages);
+          return _getSites(enabledSites, messages, isFilterSwitched);
         },
       )))
     ]);

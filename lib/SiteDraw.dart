@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:alerts/SettingsRepository.dart';
 import 'package:alerts/Theme/custom_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -212,7 +213,13 @@ class _SiteDraw extends State<SiteDraw> {
     element.name ==
     filteredSites[index].name),
     value);
+
+
+
+
     });
+    SettingsRepository.saveSites(filteredSites);
+
     },
     title: Text(filteredSites[index].name),
     secondary: Container(
@@ -244,7 +251,7 @@ class _SiteDraw extends State<SiteDraw> {
     if (searchString.length > 0) {
     filteredAssetClasses.clear();
 
-    print("filter bing used");
+
     filteredAssetClasses.addAll(data.assetClasses
         .where((element) =>
     element.assetClass
@@ -257,6 +264,8 @@ class _SiteDraw extends State<SiteDraw> {
     filteredAssetClasses.clear();
     filteredAssetClasses.addAll(data.assetClasses);
     }
+    SettingsRepository.saveAssets(filteredAssetClasses);
+
     return ListView.builder(
     itemCount: filteredAssetClasses.length,
     itemBuilder: (BuildContext context, int index) {

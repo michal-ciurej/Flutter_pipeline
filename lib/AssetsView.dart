@@ -20,6 +20,7 @@ import 'package:printing/printing.dart';
 import 'AddAsset.dart';
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
+import 'ReplaceAsset.dart';
 import 'Site.dart';
 import 'Ticket.dart';
 import 'globals.dart' as globals;
@@ -37,6 +38,16 @@ class AssetsView extends StatefulWidget {
 
 class _AssetsView extends State<AssetsView> {
   var toPrint = [];
+
+  @override
+
+  @override
+  void initState() {
+
+
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -203,12 +214,28 @@ class _AssetsView extends State<AssetsView> {
                             child: Column(
                               children: [
                                 ListTile(
-                                  leading: enabledAssets
-                                      .where((element) =>
-                                          element.site ==
-                                          sitesList[group_index])
-                                      .elementAt(index)
-                                      .getIcon(30.0),
+                                  leading: IconButton(
+                                    iconSize: 30,
+                                    icon: const Icon(Icons.published_with_changes_outlined),
+                                    tooltip: 'Replace Asset',
+                                    onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute<void>(
+                                                builder: (BuildContext context) => ReplaceAsset(
+                                                    site: sites.sites[1].name,
+                                                    stompClient: stompClient,
+                                                    originalAsset:enabledAssets
+                                                    .where((element) =>
+                                                  element.site ==
+                                                  sitesList[group_index])
+                                                  .elementAt(index) ),
+                                                //fullscreenDialog: true,
+                                              ),
+                                            );
+
+                                    },
+                                  ),
                                   title: Text(
                                     enabledAssets
                                         .where((element) =>

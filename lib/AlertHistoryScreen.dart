@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-
 import 'package:alerts/AlarmMessagePayload.dart';
 import 'package:alerts/AlertsScreen.dart';
 import 'package:alerts/BarChart.dart';
@@ -23,9 +22,6 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-
-
-
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
 import 'Cases.dart';
@@ -42,7 +38,7 @@ class AlertHistoryScreen extends StatefulWidget {
   final String asset;
 
   const AlertHistoryScreen(
-      {Key? key, required this.site, required this.asset ,required this.client})
+      {Key? key, required this.site, required this.asset, required this.client})
       : super(key: key);
 
   @override
@@ -54,284 +50,221 @@ class AlertHistoryScreen extends StatefulWidget {
 }
 
 class _AlertHistoryScreen extends State<AlertHistoryScreen> {
-
   StompClient client;
   List<AlarmMessagePayload> history = [];
-
-
 
   String site;
 
   String asset;
 
-  _AlertHistoryScreen(StompClient this.client, String this.site, String this.asset);
+  _AlertHistoryScreen(
+      StompClient this.client, String this.site, String this.asset);
 
   @override
-  void initState()  {
-
-    getAlertHistory(site, asset).then((value)
-      {
-        var data= jsonDecode(value.body);
-        setState(() {
-
-            history.addAll(AlarmMessagePayload().fromJson(data));
-
-        });
+  void initState() {
+    getAlertHistory(site, asset).then((value) {
+      var data = jsonDecode(value.body);
+      setState(() {
+        history.addAll(AlarmMessagePayload().fromJson(data));
       });
+    });
 
-       super.initState();
-
-
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    
-    
     Asset currentasset = assets.assets.firstWhere(
-          (element) => (site ==
-        element.site &&
-        element.name ==
-            asset));
+        (element) => (site == element.site && element.name == asset));
 
-      
-      
-      
     return Scaffold(
-
-        appBar: AppBar(
-
-          iconTheme: Theme.of(context).iconTheme,
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-
-            },
-          ),
-          toolbarHeight: 150,
-          title:  Container(
-            child: Container(
-              // DefaultTextStyle: TextStyle(color: Colors.red),
-              padding: EdgeInsets.only(top: 20),
-              child:
-              Table(
-                columnWidths: const <int, TableColumnWidth>{
-                  0: FlexColumnWidth(0.3),
-                  1: FlexColumnWidth(0.7),
-
-                },
-                defaultVerticalAlignment:
-                TableCellVerticalAlignment.top,
-                children: <TableRow>[
-                  TableRow(
-                    children: <Widget>[
-                      TableCell(
-                        verticalAlignment:
-                        TableCellVerticalAlignment.top,
-                        child: Container(
-                          height: 25,
-                          //width: 32,
-                          color: Colors.transparent,
-                          child: Text("Asset:",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2?.copyWith(fontSize: 20, color: Theme.of(context).colorScheme.primary)
+      appBar: AppBar(
+        iconTheme: Theme.of(context).iconTheme,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        toolbarHeight: 150,
+        title: Container(
+          child: Container(
+            // DefaultTextStyle: TextStyle(color: Colors.red),
+            padding: EdgeInsets.only(top: 20),
+            child: Table(
+              columnWidths: const <int, TableColumnWidth>{
+                0: FlexColumnWidth(0.3),
+                1: FlexColumnWidth(0.7),
+              },
+              defaultVerticalAlignment: TableCellVerticalAlignment.top,
+              children: <TableRow>[
+                TableRow(
+                  children: <Widget>[
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.top,
+                      child: Container(
+                        height: 25,
+                        //width: 32,
+                        color: Colors.transparent,
+                        child: Text("Asset:",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2
+                                ?.copyWith(
+                                    fontSize: 20,
+                                    color:
+                                        Theme.of(context).colorScheme.primary)
                             //GoogleFonts.roboto(
                             //    fontSize: 14,
                             //    fontWeight:
                             //    FontWeight.w200)
-                          ),
-                        ),
+                            ),
                       ),
-                      TableCell(
-                        verticalAlignment:
-                        TableCellVerticalAlignment.top,
-                        child: Container(
-                          height: 25,
-                          //  width: 32,
-                          color: Colors.transparent,
-                          child: Text(currentasset.name.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline6),
-                        ),
-                      )
-                    ],
+                    ),
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.top,
+                      child: Container(
+                        height: 25,
+                        //  width: 32,
+                        color: Colors.transparent,
+                        child: Text(currentasset.name.toString(),
+                            style: Theme.of(context).textTheme.headline6),
+                      ),
+                    )
+                  ],
+                ),
+                TableRow(
+                  decoration: const BoxDecoration(
+                    color: Colors.transparent,
                   ),
+                  children: <Widget>[
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.top,
+                      child: Container(
+                          height: 20,
+                          width: 32,
+                          color: Colors.transparent,
+                          child: Text("Asset Type",
+                              style: Theme.of(context).textTheme.bodyText2)),
+                    ),
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.top,
+                      child: Container(
+                        height: 20,
+                        width: 32,
+                        color: Colors.transparent,
+                        child: Text(currentasset.type.toString(),
+                            style: Theme.of(context).textTheme.subtitle2),
+                      ),
+                    )
+                  ],
+                ),
+                if (currentasset.id != null) ...[
                   TableRow(
                     decoration: const BoxDecoration(
                       color: Colors.transparent,
                     ),
                     children: <Widget>[
                       TableCell(
-                        verticalAlignment:
-                        TableCellVerticalAlignment.top,
+                        verticalAlignment: TableCellVerticalAlignment.top,
                         child: Container(
                             height: 20,
                             width: 32,
                             color: Colors.transparent,
-                            child: Text("Asset Type",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2)),
+                            child: Text("Sensor Id",
+                                style: Theme.of(context).textTheme.bodyText2)),
                       ),
                       TableCell(
-                        verticalAlignment:
-                        TableCellVerticalAlignment.top,
+                        verticalAlignment: TableCellVerticalAlignment.top,
                         child: Container(
-                          height: 20,
-                          width: 32,
-                          color: Colors.transparent,
-                          child: Text(currentasset.type.toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle2), ),
+                            height: 20,
+                            width: 32,
+                            color: Colors.transparent,
+                            child: Text(currentasset.id.toString(),
+                                style: Theme.of(context).textTheme.subtitle2)),
                       )
                     ],
-                  ),
-                  if (currentasset.id != null) ...[
-                    TableRow(
-                      decoration: const BoxDecoration(
+                  )
+                ],
+                TableRow(
+                  children: <Widget>[
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.top,
+                      child: Container(
+                        height: 20,
+                        width: 32,
                         color: Colors.transparent,
+                        child: Text("Manufacturer",
+                            style: Theme.of(context).textTheme.bodyText2),
                       ),
-                      children: <Widget>[
-                        TableCell(
-                          verticalAlignment:
-                          TableCellVerticalAlignment
-                              .top,
-                          child: Container(
-                              height: 20,
-                              width: 32,
-                              color: Colors.transparent,
-                              child: Text("Sensor Id",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2)),
-                        ),
-                        TableCell(
-                          verticalAlignment:
-                          TableCellVerticalAlignment
-                              .top,
-                          child: Container(
-                              height: 20,
-                              width: 32,
-                              color: Colors.transparent,
-                              child: Text(currentasset.id.toString(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .subtitle2)),
-                        )
-                      ],
+                    ),
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.top,
+                      child: Container(
+                        height: 20,
+                        width: 32,
+                        color: Colors.transparent,
+                        child: Text(currentasset.manufacturer.toString(),
+                            style: Theme.of(context).textTheme.subtitle2),
+                      ),
                     )
                   ],
-
-
-                  TableRow(
-                    children: <Widget>[
-                      TableCell(
-                        verticalAlignment:
-                        TableCellVerticalAlignment.top,
-                        child: Container(
-                          height: 20,
-                          width: 32,
-                          color: Colors.transparent,
-                          child: Text("Manufacturer",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText2),
-                        ),
-                      ),
-                      TableCell(
-                        verticalAlignment:
-                        TableCellVerticalAlignment.top,
-                        child: Container(
-                          height: 20,
-                          width: 32,
-                          color: Colors.transparent,
-                          child: Text(
-                              assets.assets
-                                  .where((asset) => (currentasset
-                                  .site ==
-                                  asset.site &&
-                                  asset.name ==
-                                      currentasset))
-                                  .toList()
-                                  .map(
-                                      (e) => e.manufacturer)
-                                  .toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle2),
-                        ),
-                      )
-                    ],
-                  ),
-
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
-
         ),
-        body:
-            ListView.builder(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
+      ),
+      body: ListView.builder(
+          itemCount: history.length,
+          itemBuilder: (context, index) {
+            return Neumorphic(
+              margin: EdgeInsets.fromLTRB(25, 5, 25, 0),
+              style: NeumorphicStyle(
+                shape: NeumorphicShape.flat,
+                border: NeumorphicBorder(color: Color(0x33000000), width: 0.8),
+                boxShape:
+                    NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
+                depth: 1,
+                lightSource: LightSource.topLeft,
+                color: Colors.white,
+              ),
+              child: Container(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(children: [
+                    Text(
+                        history[index].dateTime,
+                        style: Theme.of(context).textTheme.subtitle2),
+                    Text(" - " + history[index].name,
+                        style: Theme.of(context).textTheme.subtitle2)
+                  ])),
+            );
+          }),
 
-              itemCount: history.length,
-              itemBuilder: (context, index) {
-                return Neumorphic(
-                  margin: EdgeInsets.fromLTRB(25, 5, 25, 0),
+      // if (history.isEmpty) ...[
 
-                  style: NeumorphicStyle(
-                      shape: NeumorphicShape.flat,
-                      border: NeumorphicBorder(
-                        color: Color(0x33000000),
-                        width: 0.8),
-                      boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-                      depth: 1,
-                      lightSource: LightSource.topLeft,
-                      color: Colors.white,
-
-                  ),
-
-                    child:
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      child: Text(history[index].name, style: Theme.of(context)
-                          .textTheme
-                          .subtitle2)
-                      ),
-                    );
-
-              }),
-            
-
-
-
-           // if (history.isEmpty) ...[
-
-              //]
-       // ]
-
-        );
-
-
-
-
-
-
-
+      //]
+      // ]
+    );
   }
 
   Future<http.Response> getAlertHistory(String site, String asset) async {
     final response = http.get(
-      Uri.parse(protocol + '://' + serverAddress + port + '/api/alert/history/'+ site + "/"+ asset+ "/"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      }
-    );
+        Uri.parse(protocol +
+            '://' +
+            serverAddress +
+            port +
+            '/api/alert/history/' +
+            site +
+            "/" +
+            asset +
+            "/"),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        });
     return response;
   }
 }

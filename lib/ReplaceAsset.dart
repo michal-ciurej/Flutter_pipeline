@@ -16,25 +16,23 @@ import 'main.dart';
 
 
 
-class AddAsset extends StatelessWidget {
+class ReplaceAsset extends StatelessWidget {
   var site;
-  var asset = new Asset();
   final _formKey = GlobalKey<FormBuilderState>();
   StompClient stompClient;
+  Asset originalAsset;
 
 
 
-  AddAsset({required this.site, required this.stompClient});
+  ReplaceAsset({required this.site, required this.stompClient, required this.originalAsset});
 
   @override
   Widget build(BuildContext context) {
-    asset.site=site;
-
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF25b432),
-        title: Text('Add an Asset'),
+        title: Text('Replace Asset'),
       ),
       body: SingleChildScrollView(child:Center(
         child: FormBuilder(
@@ -51,27 +49,29 @@ class AddAsset extends StatelessWidget {
                     padding: EdgeInsets.all(25.0),child:Column(
                     children: [
                       FormBuilderTextField(
-                        onChanged: (value){asset.description=value;},
+                        onChanged: (value){originalAsset.description=value;},
                         maxLines: 2,
+                        initialValue: originalAsset.description,
                         name: 'description',
                         style: Theme.of(context).textTheme.bodyText1,
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         decoration: InputDecoration(labelText: "Asset Description"),
                       ),
                       FormBuilderTextField(
-                        onChanged: (value){asset.name=value;},
+                        onChanged: (value){originalAsset.name=value;},
                         maxLines: 1,
                         name: 'name',
+                        initialValue: originalAsset.name,
                         style: Theme.of(context).textTheme.bodyText1,
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         decoration: InputDecoration(labelText: "Asset Short Name"),
                       ),
                       FormBuilderDropdown(
-                        onChanged: (value){print(value);asset.site = value;},
+                        onChanged: (value){print(value);originalAsset.site = value;},
                         name: "site",
                         style: Theme.of(context).textTheme.bodyText1,
                         decoration: InputDecoration(labelText: "Site"),
-                        initialValue: site,
+                        initialValue: originalAsset.site,
                         hint: Text('Select Site'),
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         items: sites.sites
@@ -80,8 +80,9 @@ class AddAsset extends StatelessWidget {
                             .toList(),
                       ),
                       FormBuilderDropdown(
-                        onChanged: (value){asset.assetClass = value;},
+                        onChanged: (value){originalAsset.assetClass = value;},
                         name: "Asset Class",
+                        initialValue: originalAsset.assetClass,
                         style: Theme.of(context).textTheme.bodyText1,
                         decoration: InputDecoration(labelText: "Asset Class"),
                         // initialValue: 'Male',
@@ -93,8 +94,9 @@ class AddAsset extends StatelessWidget {
                             .toList(),
                       ),
                       FormBuilderDropdown(
-                        onChanged: (value){asset.type = value;},
+                        onChanged: (value){originalAsset.type = value;},
                         name: "Asset Type",
+                        initialValue: originalAsset.type,
                         style: Theme.of(context).textTheme.bodyText1,
                         decoration: InputDecoration(labelText: "Asset Type"),
                         // initialValue: 'Male',
@@ -106,25 +108,28 @@ class AddAsset extends StatelessWidget {
                             .toList(),
                       ),
                       FormBuilderTextField(
-                        onChanged: (value){asset.manufacturer=value;},
+                        onChanged: (value){originalAsset.manufacturer=value;},
                         maxLines: 1,
                         name: 'manufacturer',
+                        initialValue: originalAsset.manufacturer,
                         style: Theme.of(context).textTheme.bodyText1,
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         decoration: InputDecoration(labelText: "Manufacturer"),
                       ),
                       FormBuilderTextField(
-                        onChanged: (value){asset.model=value;},
+                        onChanged: (value){originalAsset.model=value;},
                         maxLines: 1,
                         name: 'model',
+                        initialValue: originalAsset.model,
                         style: Theme.of(context).textTheme.bodyText1,
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         decoration: InputDecoration(labelText: "Model"),
                       ),
                       FormBuilderTextField(
-                        onChanged: (value){asset.location=value;},
+                        onChanged: (value){originalAsset.location=value;},
                         maxLines: 1,
                         name: 'location',
+                        initialValue: originalAsset.location,
                         style: Theme.of(context).textTheme.bodyText1,
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         decoration: InputDecoration(labelText: "Location"),
@@ -140,8 +145,8 @@ class AddAsset extends StatelessWidget {
                           if (_formKey.currentState!.validate()) {
 
                             stompClient.send(
-                              destination: '/app/assets/new',
-                              body: json.encode(asset.toJson()),
+                              destination: '/app/assets/update',
+                              body: json.encode(originalAsset.toJson()),
                             );
 
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -161,7 +166,7 @@ class AddAsset extends StatelessWidget {
 
 
                         },
-                        child: const Text('Add Asset'),
+                        child: const Text('Replace Asset'),
                       ),
                     ]))
                 )

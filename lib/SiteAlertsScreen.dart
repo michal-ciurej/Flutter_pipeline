@@ -35,32 +35,37 @@ import 'package:http/http.dart' as http;
 
 class SiteAlertsScreen extends StatefulWidget {
   final StompClient client;
-  final List<AlarmMessagePayload> messages;
+  final List<AlarmMessagePayload> siteSpecificMessages;
   final String site;
 
   final ValueChanged<String> update;
 
-  const SiteAlertsScreen(
+  var isFilterSwitched;
+
+   SiteAlertsScreen(
       {Key? key,
       required this.site,
-      required this.messages,
+      required this.siteSpecificMessages,
       required this.client,
-      required this.update})
+      required this.update,
+      required this.isFilterSwitched
+      })
       : super(key: key);
 
   @override
   _SiteAlertsScreen createState() =>
-      _SiteAlertsScreen(client, site, messages, update);
+      _SiteAlertsScreen(client, site, siteSpecificMessages, update, isFilterSwitched);
 }
 
 class _SiteAlertsScreen extends State<SiteAlertsScreen> {
   StompClient client;
-  List<AlarmMessagePayload> messages;
+  List<AlarmMessagePayload> siteSpecificMessages;
   String site;
   ValueChanged<String> update;
+  var isFilterSwitched;
 
   _SiteAlertsScreen(StompClient this.client, String this.site,
-      List<AlarmMessagePayload> this.messages, this.update);
+      List<AlarmMessagePayload> this.siteSpecificMessages, this.update, this.isFilterSwitched);
 
   @override
   void initState() {
@@ -134,18 +139,28 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
         ),
         body: Consumer<AppMessages>(builder: (context, data, _) {
-          messages.clear();
-          messages = Provider.of<AppMessages>(context).entries
+
+
+
+          siteSpecificMessages.clear();
+          siteSpecificMessages = Provider.of<AppMessages>(context).entries
               .where((element) =>
           element.site ==
               site)
               .toList();
 
+          if (isFilterSwitched) {
+            siteSpecificMessages = siteSpecificMessages
+                .where((element) => element.status != 'Inactive')
+                .toList();
+          }
+
+
           return ListView.builder(
               shrinkWrap: true,
-              itemCount: messages.length,
+              itemCount: siteSpecificMessages.length,
               itemBuilder: (context, index) {
-                var element = messages[index];
+                var element = siteSpecificMessages[index];
                 return Neumorphic(
                     // padding:EdgeInsets.fromLTRB(20, 5, 20, 5),
                     margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -187,7 +202,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                     //             color: element.status=='Active' ? Colors.red: Colors.lightGreen, width: 5))),
                     child: Slidable(
                         // Specify a key if the Slidable is dismissible.
-                        key: ValueKey(messages.indexOf(element)),
+                        key: ValueKey(siteSpecificMessages.indexOf(element)),
 
                         // The start action pane is the one at the left or the top side.
                         startActionPane: ActionPane(
@@ -284,9 +299,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                     ?.copyWith(fontSize: 19),
                               )
                             ]),
-                            subtitle: Text(
-                                DateFormat("HH:mm dd-MMM-yyyy")
-                                    .format(DateTime.parse(element.dateTime)),
+                            subtitle: Text(element.dateTime,
                                 style: GoogleFonts.roboto(
                                     fontSize: 13, fontWeight: FontWeight.w300)),
                             children: [

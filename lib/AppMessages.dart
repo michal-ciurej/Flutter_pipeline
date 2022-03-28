@@ -27,15 +27,16 @@ class AppMessages extends ChangeNotifier {
       alarm.sensorId = alert['sensorId'];
       alarm.messageText = alert['messageText'];
 
-      if(entries.indexWhere((element) => element.id == alarm.id && element.site == alarm.site) == -1) {
-      entries.add(alarm);
+      if (entries.indexWhere((element) =>
+      element.id == alarm.id && element.site == alarm.site) == -1) {
+        entries.add(alarm);
 
-      cleanUpMessages();
-      entries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-      notifyListeners();
+
+        entries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
       }
-
     }
+    cleanUpMessages();
+    notifyListeners();
   }
 
   void update(Map<String, dynamic> update) {
@@ -44,7 +45,7 @@ class AppMessages extends ChangeNotifier {
         alarm.status = update['status'];
         alarm.ack = update['ack'];
         alarm.caseNumber = update['caseNumber'];
-        alarm.messageText=update['messageText'];
+        alarm.messageText = update['messageText'];
         // notifyListeners();
         print('updating alarm' + alarm.id + ' with status ' + alarm.status);
         if (alarm.status == 'closed') {
@@ -58,14 +59,13 @@ class AppMessages extends ChangeNotifier {
   }
 
   void cleanUpMessages() {
-
-    for (AlarmMessagePayload alarm in entries) {
-      if (alarm.status == 'Inactive' &&
-          alarm.ack.toString().toUpperCase() == 'TRUE' )
-        entries.remove(alarm);
-
-      }
+    for (int i = 0; i < entries.length; i++) {
+      if (entries[i].status == 'Inactive' &&
+          entries[i].ack.toString().toUpperCase() == 'TRUE')
+        entries.removeAt(i);
     }
-
-
+  }
 }
+
+
+

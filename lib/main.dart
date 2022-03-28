@@ -20,6 +20,7 @@ import 'package:stomp_dart_client/stomp_frame.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'AddAsset.dart';
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
 import 'AssetsView.dart';
@@ -29,8 +30,9 @@ import 'CasesScreen.dart';
 import 'HeatMap.dart';
 import 'LoginScreen.dart';
 import 'NfcManager.dart';
+import 'RaiseAlert.dart';
 import 'ScanPage.dart';
-import 'Settings.dart';
+import 'SettingsRepository.dart';
 import 'Site.dart';
 import 'SiteDraw.dart';
 import 'Theme/custom_theme.dart';
@@ -38,17 +40,20 @@ import 'Ticket.dart';
 
 late var serverAddress;
 //remote debugging
-var protocol = 'https';
-var socketProtocol = 'wss';
-var port = ':8443/landscaper-service';
-
+//var protocol = 'https';
+//var socketProtocol = 'wss';
+//var port = ':443/landscaper-service';
+var fabInRail = userDetails.featureToggles.contains("raiseAlert") ? true:false;
+var fabMode='raiseAlert';
+late var token;
 //local environment
-/*var protocol = 'http';
+var protocol = 'http';
 var socketProtocol = 'ws';
 var port=':8080';
-*/
+
 
 void onConnect(StompFrame frame) {
+
   stompClient.subscribe(
     destination: '/topic/messages',
     callback: (frame) {
@@ -259,6 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+
     super.initState();
 
     _initPackageInfo();
@@ -290,20 +296,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => _currentIndex = 0);
   }
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -369,8 +361,27 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
 
     void _onItemTapped(int index) {
-      print(index);
       setState(() {
+        if(userDetails.featureToggles.contains("raiseAlert"))
+          fabInRail=true;
+        else
+          fabInRail=false;
+
+        fabMode="raiseAlert";
+
+       if(_children[index].runtimeType == AssetsView && userDetails.featureToggles.contains("assets")){
+         fabInRail=true;
+         fabMode="addAsset";
+       }
+       if(_children[index].runtimeType == SplitView && userDetails.featureToggles.contains("raiseAlert")){
+         fabInRail=true;
+         fabMode="raiseAlert";
+       }
+        if(_children[index].runtimeType == SiteDraw){
+          fabInRail=false;
+
+        }
+
         _currentIndex = index;
       });
     }
@@ -388,10 +399,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     int _destinationCount = _allDestinations.length;
-    bool _fabInRail = false;
+
     bool _includeBaseDestinationsInMenu = true;
 
     return AdaptiveNavigationScaffold(
+        floatingActionButton:fabInRail ? getActionButtong(context):null,
       navigationTypeResolver: (context) {
         if (MediaQuery
             .of(context)
@@ -450,7 +462,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ]
           ],
           backgroundColor: Colors.white,
-          
           toolbarHeight: 42,
           title: Text('MyBuildings.live', style: GoogleFonts.roboto(fontSize: 12,color: Color(0xFF136d1b), fontWeight: FontWeight.bold)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
@@ -462,44 +473,59 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: TextStyle(color: Colors.white))
           ])),
       body: _children[_currentIndex],
-      fabInRail: _fabInRail,
+      fabInRail: true,
       includeBaseDestinationsInMenu: _includeBaseDestinationsInMenu,
-    ); /*Scaffold(
-                  drawer: siteDraw(),
-                  bottomNavigationBar: BottomNavigationBar(
-                    items: const <BottomNavigationBarItem>[
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.home),
-                        label: 'Alerts',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.travel_explore),
-                        label: 'Heat Map',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.work),
-                        label: 'My Cases',
-                      ),
-                    ],
-                    currentIndex: _currentIndex,
-                    selectedItemColor: Colors.amber[800],
-                    onTap: _onItemTapped,
-                  ),
-                  appBar: AppBar(
-                    // Here we take the value from the MyHomePage object that was created by
-                    // the App.build method, and use it to set our appbar title.
-                    title: Text(widget.title),
-                  ),
-                  body: LayoutBuilder(
-                      builder: (context, constraints) {
-                        if (constraints.maxWidth > 600) {
-                          return _children[_currentIndex];
-                        } else {
-                          return _children[0];
-                        }
-                      })
-              );*/
+    );
   }
+}
+
+FloatingActionButton getActionButtong(BuildContext context) {
+
+  switch (fabMode) {
+    case "addAsset" :
+      {
+
+        return FloatingActionButton(
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.domain_add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => AddAsset(
+                      site: sites.sites[1].name,
+                      stompClient: stompClient),
+                  //fullscreenDialog: true,
+                ),
+              );
+            });
+      }
+      break;
+    case "raiseAlert" :
+      {
+        return FloatingActionButton(
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.notifications_active_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => RaiseAlert(
+                      stompClient: stompClient),
+                  //fullscreenDialog: true,
+                ),
+              );
+            });
+      }
+      break;
+    default : {
+      return FloatingActionButton(
+          onPressed: () {
+            // Add your onPressed code here!
+          });
+    }
+  }
+
 }
 
 
