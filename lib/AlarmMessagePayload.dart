@@ -53,5 +53,7 @@ class AlarmMessagePayload {
     return results;
   }
 
+  Object? toJson() {}
+
 
 }

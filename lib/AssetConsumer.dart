@@ -12,6 +12,8 @@ class Assets extends ChangeNotifier {
       for (Map<String, dynamic> a in results) {
         Asset asset = new Asset();
         asset.name = a['name'];
+        asset.model = a['model'];
+        asset.location = a['location'];
         asset.id = a['id'];
         asset.type = a['type'];
         asset.status = a['status'];
@@ -49,6 +51,13 @@ class Assets extends ChangeNotifier {
           assetClasses.add(AssetClass(asset.assetClass, asset.checked));
         }
       }
+
+      for(int i = 0; i< assets.length; i++) {
+        if(assets[i].status=='replaced'){
+          assets.removeAt(i);
+        }
+      }
+
 
       notifyListeners();
     });
@@ -127,6 +136,7 @@ class Asset {
         'status': status,
         'manufacturer': manufacturer,
         'model': model,
-        'location': location
+        'location': location,
+        'id':id
       };
 }

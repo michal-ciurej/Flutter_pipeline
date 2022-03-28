@@ -30,6 +30,7 @@ import 'CasesScreen.dart';
 import 'HeatMap.dart';
 import 'LoginScreen.dart';
 import 'NfcManager.dart';
+import 'RaiseAlert.dart';
 import 'ScanPage.dart';
 import 'SettingsRepository.dart';
 import 'Site.dart';
@@ -39,16 +40,16 @@ import 'Ticket.dart';
 
 late var serverAddress;
 //remote debugging
-var protocol = 'https';
-var socketProtocol = 'wss';
-var port = ':443/landscaper-service';
-var fabInRail = false;
-var fabMode='addAsset';
+//var protocol = 'https';
+//var socketProtocol = 'wss';
+//var port = ':443/landscaper-service';
+var fabInRail = userDetails.featureToggles.contains("raiseAlert") ? true:false;
+var fabMode='raiseAlert';
 late var token;
 //local environment
-//var protocol = 'http';
-//var socketProtocol = 'ws';
-//var port=':8080';
+var protocol = 'http';
+var socketProtocol = 'ws';
+var port=':8080';
 
 
 void onConnect(StompFrame frame) {
@@ -263,6 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+
     super.initState();
 
     _initPackageInfo();
@@ -294,20 +296,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => _currentIndex = 0);
   }
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -374,14 +362,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
     void _onItemTapped(int index) {
       setState(() {
-       if(_children[index].runtimeType == AssetsView){
+        if(userDetails.featureToggles.contains("raiseAlert"))
+          fabInRail=true;
+        else
+          fabInRail=false;
+
+        fabMode="raiseAlert";
+
+       if(_children[index].runtimeType == AssetsView && userDetails.featureToggles.contains("assets")){
          fabInRail=true;
          fabMode="addAsset";
-       }else{
-         fabInRail=false;
-         fabMode="addAsset";
        }
+       if(_children[index].runtimeType == SplitView && userDetails.featureToggles.contains("raiseAlert")){
+         fabInRail=true;
+         fabMode="raiseAlert";
+       }
+        if(_children[index].runtimeType == SiteDraw){
+          fabInRail=false;
 
+        }
 
         _currentIndex = index;
       });
@@ -474,7 +473,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 style: TextStyle(color: Colors.white))
           ])),
       body: _children[_currentIndex],
-      fabInRail: false,
+      fabInRail: true,
       includeBaseDestinationsInMenu: _includeBaseDestinationsInMenu,
     );
   }
@@ -485,6 +484,7 @@ FloatingActionButton getActionButtong(BuildContext context) {
   switch (fabMode) {
     case "addAsset" :
       {
+
         return FloatingActionButton(
             backgroundColor: Colors.green,
             child: const Icon(Icons.domain_add),
@@ -495,7 +495,24 @@ FloatingActionButton getActionButtong(BuildContext context) {
                   builder: (BuildContext context) => AddAsset(
                       site: sites.sites[1].name,
                       stompClient: stompClient),
-                  fullscreenDialog: true,
+                  //fullscreenDialog: true,
+                ),
+              );
+            });
+      }
+      break;
+    case "raiseAlert" :
+      {
+        return FloatingActionButton(
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.notifications_active_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => RaiseAlert(
+                      stompClient: stompClient),
+                  //fullscreenDialog: true,
                 ),
               );
             });

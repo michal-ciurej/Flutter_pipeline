@@ -41,10 +41,7 @@ class _AlertsScreen extends State<AlertsScreen> {
   void initState() {
     super.initState();
 
-    setState(() {
-      fabInRail=false;
-      fabMode="";
-    });
+
   }
 
   @override
