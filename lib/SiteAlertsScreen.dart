@@ -229,7 +229,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                               )
                             ] else ...[
                               SlidableAction(
-                                onPressed: (BuildContext context) => {},
+                                onPressed: (BuildContext context) => {update(element.id)},
                                 backgroundColor: Color(0xff595959),
                                 foregroundColor: Colors.white,
                                 icon: Icons.close_outlined,
