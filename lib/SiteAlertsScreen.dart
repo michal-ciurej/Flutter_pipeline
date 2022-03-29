@@ -140,11 +140,22 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
         ),
         body: Consumer<AppMessages>(builder: (context, data, _) {
 
-          siteSpecificMessages.clear();
+          siteSpecificMessages .clear();
           siteSpecificMessages = Provider.of<AppMessages>(context).entries
               .where((element) =>
           element.site ==
               site)
+              .toList();
+
+          var enabledTypes = Provider.of<Assets>(context)
+              .assetClasses
+              .where((element) => element.checked == true)
+              .toList();
+
+          siteSpecificMessages = siteSpecificMessages
+              .where((element) => enabledTypes
+              .where((type) => type.assetClass == element.assetClass)
+              .isNotEmpty)
               .toList();
 
           if (isFilterSwitched) {
