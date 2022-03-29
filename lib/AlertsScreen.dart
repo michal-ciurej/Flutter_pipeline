@@ -91,13 +91,8 @@ class _AlertsScreen extends State<AlertsScreen> {
               .where((element) => enabledSites
                   .where((site) =>
                       //logic deciding when a site is alarmed but acknowledged... I think
-                      site.name == element.site &&
-                      (element.status == 'Active' ||
-                          element.ack
-                                  .toString()
-                                  .toUpperCase()
-                                  .compareTo("FALSE") ==
-                              0))
+                      site.name == element.site 
+                      )
                   .isNotEmpty)
               .toList();
 
