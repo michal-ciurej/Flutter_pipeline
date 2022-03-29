@@ -35,22 +35,22 @@ class AppMessages extends ChangeNotifier {
         entries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
       }
     }
-    //cleanUpMessages();
+
     notifyListeners();
   }
 
   void update(Map<String, dynamic> update) {
-    for (AlarmMessagePayload alarm in entries) {
-      if (alarm.id == update['id']) {
-        alarm.status = update['status'];
-        alarm.ack = update['ack'];
-        alarm.caseNumber = update['caseNumber'];
-        alarm.messageText = update['messageText'];
+    for (int i = 0; i< entries.length; i++) {
+      if (entries[i].id == update['id']) {
+        entries[i].status = update['status'];
+        entries[i].ack = update['ack'];
+        entries[i].caseNumber = update['caseNumber'];
+        entries[i].messageText = update['messageText'];
         // notifyListeners();
-        print('updating alarm' + alarm.id + ' with status ' + alarm.status);
-        if (alarm.status == 'closed') {
-          print('removing alarm with status ' + alarm.status);
-          entries.remove(alarm);
+        print('updating alarm' + entries[i].id + ' with status ' + entries[i].status);
+        if (entries[i].status == 'closed') {
+          print('removing alarm with status ' + entries[i].status);
+          entries.removeAt(i);
         }
       }
     }
