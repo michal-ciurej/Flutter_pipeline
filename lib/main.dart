@@ -30,6 +30,7 @@ import 'CasesScreen.dart';
 import 'HeatMap.dart';
 import 'LoginScreen.dart';
 import 'NfcManager.dart';
+import 'PermissionCheck.dart';
 import 'RaiseAlert.dart';
 import 'ScanPage.dart';
 import 'SettingsRepository.dart';
@@ -40,25 +41,24 @@ import 'Ticket.dart';
 
 late var serverAddress;
 //remote debugging
-//var protocol = 'https';
-//var socketProtocol = 'wss';
-//var port = ':443/landscaper-service';
-var fabInRail = userDetails.featureToggles.contains("raiseAlert") ? true:false;
-var fabMode='raiseAlert';
+var protocol = 'https';
+var socketProtocol = 'wss';
+var port = ':443/landscaper-service';
+var fabInRail =
+    userDetails.featureToggles.contains("raiseAlert") ? true : false;
+var fabMode = 'raiseAlert';
 late var token;
 //local environment
-var protocol = 'http';
-var socketProtocol = 'ws';
-var port=':8080';
-
+//var protocol = 'http';
+//var socketProtocol = 'ws';
+//var port = ':8080';
 
 void onConnect(StompFrame frame) {
-
   stompClient.subscribe(
     destination: '/topic/messages',
     callback: (frame) {
       List<Map<String, dynamic>> result =
-      List<Map<String, dynamic>>.from(json.decode(frame.body!));
+          List<Map<String, dynamic>>.from(json.decode(frame.body!));
       messages.add(result);
     },
   );
@@ -68,7 +68,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the sites");
       List<Map<String, dynamic>> result =
-      List<Map<String, dynamic>>.from(json.decode(frame.body!));
+          List<Map<String, dynamic>>.from(json.decode(frame.body!));
       sites.add(result);
       print("Finished adding  all the sites");
     },
@@ -79,7 +79,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the assets");
       List<Map<String, dynamic>> result =
-      List<Map<String, dynamic>>.from(json.decode(frame.body!));
+          List<Map<String, dynamic>>.from(json.decode(frame.body!));
       assets.add(result);
     },
   );
@@ -89,7 +89,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the assets");
       List<Map<String, dynamic>> result =
-      List<Map<String, dynamic>>.from(json.decode(frame.body!));
+          List<Map<String, dynamic>>.from(json.decode(frame.body!));
       assets.add(result);
     },
   );
@@ -99,7 +99,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the alarms");
       List<Map<String, dynamic>> result =
-      List<Map<String, dynamic>>.from(json.decode(frame.body!));
+          List<Map<String, dynamic>>.from(json.decode(frame.body!));
       messages.add(result);
     },
   );
@@ -109,7 +109,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Receiving and adding cases");
       List<Map<String, dynamic>> result =
-      List<Map<String, dynamic>>.from(json.decode(frame.body!));
+          List<Map<String, dynamic>>.from(json.decode(frame.body!));
       cases.add(result);
     },
   );
@@ -119,7 +119,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Receiving and adding cases");
       List<Map<String, dynamic>> result =
-      List<Map<String, dynamic>>.from(json.decode(frame.body!));
+          List<Map<String, dynamic>>.from(json.decode(frame.body!));
       cases.add(result);
     },
   );
@@ -142,7 +142,7 @@ void onConnect(StompFrame frame) {
     destination: '/topic/status',
     callback: (frame) {
       Map<String, dynamic> result =
-      Map<String, dynamic>.from(json.decode(frame.body!));
+          Map<String, dynamic>.from(json.decode(frame.body!));
       messages.update(result);
     },
   );
@@ -150,7 +150,7 @@ void onConnect(StompFrame frame) {
 
 final stompClient = StompClient(
   config: StompConfig(
-    url: socketProtocol + '://' + serverAddress + port+'/websocket',
+    url: socketProtocol + '://' + serverAddress + port + '/websocket',
     onConnect: onConnect,
     beforeConnect: () async {
       await dotenv.load(fileName: '.env');
@@ -185,7 +185,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       systemNavigationBarColor:
-      SystemUiOverlayStyle.dark.systemNavigationBarColor,
+          SystemUiOverlayStyle.dark.systemNavigationBarColor,
     ),
   );
   HttpOverrides.global = MyHttpOverrides();
@@ -223,8 +223,6 @@ class MyApp extends StatelessWidget {
       ],
       title: 'Landscaper',
       theme: CustomTheme.lightTheme,
-
-
 
       //home: MyHomePage(title: 'Alerts'),
       //navigatorObservers: [TransitionRouteObserver()],
@@ -264,14 +262,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-
     super.initState();
 
     _initPackageInfo();
   }
 
   static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
 // Pass this method to the child page.
   void _update(String id) {
@@ -296,7 +293,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() => _currentIndex = 0);
   }
 
-
   @override
   Widget build(BuildContext context) {
     final List _children = [
@@ -310,20 +306,14 @@ class _MyHomePageState extends State<MyHomePage> {
         NfcManager(client: stompClient),
       ],
 
-      if (MediaQuery
-          .of(context)
-          .size
-          .width > 700 &&
+      if (MediaQuery.of(context).size.width > 700 &&
           userDetails.featureToggles.contains("kanban")) ...[
         //HeatMap(client: stompClient),
         WorkflowKanban(client: stompClient),
       ],
 
       //(ticket: _createTicket),
-      if (MediaQuery
-          .of(context)
-          .size
-          .width < 700 &&
+      if (MediaQuery.of(context).size.width < 700 &&
           userDetails.featureToggles.contains("cases")) ...[
         CasesScreen(update: _update, ticket: _raiseTicket, client: stompClient),
       ],
@@ -339,18 +329,12 @@ class _MyHomePageState extends State<MyHomePage> {
       if (userDetails.featureToggles.contains("nfc")) ...[
         AdaptiveScaffoldDestination(title: 'NFC', icon: Icons.nfc),
       ],
-      if (MediaQuery
-          .of(context)
-          .size
-          .width > 700 &&
+      if (MediaQuery.of(context).size.width > 700 &&
           userDetails.featureToggles.contains("kanban")) ...[
         AdaptiveScaffoldDestination(
             title: 'Ops Board', icon: Icons.space_dashboard),
       ],
-      if (MediaQuery
-          .of(context)
-          .size
-          .width < 700 &&
+      if (MediaQuery.of(context).size.width < 700 &&
           userDetails.featureToggles.contains("cases")) ...[
         AdaptiveScaffoldDestination(
             title: 'Tickets', icon: Icons.confirmation_number),
@@ -362,24 +346,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
     void _onItemTapped(int index) {
       setState(() {
-        if(userDetails.featureToggles.contains("raiseAlert"))
-          fabInRail=true;
+        if (userDetails.featureToggles.contains("raiseAlert"))
+          fabInRail = true;
         else
-          fabInRail=false;
+          fabInRail = false;
 
-        fabMode="raiseAlert";
+        fabMode = "raiseAlert";
 
-       if(_children[index].runtimeType == AssetsView && userDetails.featureToggles.contains("assets")){
-         fabInRail=true;
-         fabMode="addAsset";
-       }
-       if(_children[index].runtimeType == SplitView && userDetails.featureToggles.contains("raiseAlert")){
-         fabInRail=true;
-         fabMode="raiseAlert";
-       }
-        if(_children[index].runtimeType == SiteDraw){
-          fabInRail=false;
-
+        if (_children[index].runtimeType == AssetsView &&
+            userDetails.featureToggles.contains("assets")) {
+          fabInRail = true;
+          fabMode = "addAsset";
+        }
+        if (_children[index].runtimeType == SplitView &&
+            userDetails.featureToggles.contains("raiseAlert")) {
+          fabInRail = true;
+          fabMode = "raiseAlert";
+        }
+        if (_children[index].runtimeType == SiteDraw) {
+          fabInRail = false;
         }
 
         _currentIndex = index;
@@ -403,12 +388,9 @@ class _MyHomePageState extends State<MyHomePage> {
     bool _includeBaseDestinationsInMenu = true;
 
     return AdaptiveNavigationScaffold(
-        floatingActionButton:fabInRail ? getActionButtong(context):null,
+      floatingActionButton: fabInRail ? getActionButtong(context) : null,
       navigationTypeResolver: (context) {
-        if (MediaQuery
-            .of(context)
-            .size
-            .width > 700) {
+        if (MediaQuery.of(context).size.width > 700) {
           return NavigationType.rail;
         } else {
           return NavigationType.bottom;
@@ -420,41 +402,28 @@ class _MyHomePageState extends State<MyHomePage> {
       destinations: _allDestinations.sublist(0, _destinationCount),
       appBar: AdaptiveAppBar(
           actions: <Widget>[
-            if(userDetails.featureToggles.contains("qr"))...[
-
+            if (userDetails.featureToggles.contains("qr")) ...[
               IconButton(
                 icon: const Icon(Icons.qr_code_scanner),
                 tooltip: 'Identify Asset',
                 onPressed: () async {
-                  var hasFound=false;
+                  var hasFound = false;
                   Navigator.push(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (BuildContext
-                        context) =>
-                            Scaffold(
-                                appBar: AppBar(
-
-                                  title: Text(
-                                      "Identify Asset"),
-                                ),
-                                body:
-                                AppBarcodeScannerWidget
-                                    .defaultStyle(
-                                  resultCallback:
-                                      (String code) {
-
-                                    if(!hasFound) {
-                                      Navigator.pop(context);
-                                      hasFound=true;
-                                      AssetsView().showFindMyDialog(
-                                          context,
-                                          code);
-
-
-                                    }
-                                  },
-                                )),
+                        builder: (BuildContext context) => Scaffold(
+                            appBar: AppBar(
+                              title: Text("Identify Asset"),
+                            ),
+                            body: AppBarcodeScannerWidget.defaultStyle(
+                              resultCallback: (String code) {
+                                if (!hasFound) {
+                                  Navigator.pop(context);
+                                  hasFound = true;
+                                  AssetsView().showFindMyDialog(context, code);
+                                }
+                              },
+                            )),
                         fullscreenDialog: false,
                       ));
                 },
@@ -463,8 +432,13 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
           backgroundColor: Colors.white,
           toolbarHeight: 42,
-          title: Text('MyBuildings.live', style: GoogleFonts.roboto(fontSize: 12,color: Color(0xFF136d1b), fontWeight: FontWeight.bold)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
+          title: Text('MyBuildings.live',
+              style: GoogleFonts.roboto(
+                  fontSize: 12,
+                  color: Color(0xFF136d1b),
+                  fontWeight: FontWeight.bold)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
           leading: Column(children: <Widget>[
             Text(
                 _packageInfo.version.toString() +
@@ -480,54 +454,53 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 FloatingActionButton getActionButtong(BuildContext context) {
-
   switch (fabMode) {
-    case "addAsset" :
+    case "addAsset":
       {
-
         return FloatingActionButton(
             backgroundColor: Colors.green,
             child: const Icon(Icons.domain_add),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) => AddAsset(
-                      site: sites.sites[1].name,
-                      stompClient: stompClient),
-                  //fullscreenDialog: true,
-                ),
-              );
+              if (PermissionCheck.check(PermissionCheck.ADD_ASSET, context)) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => AddAsset(
+                        site: sites.sites[1].name, stompClient: stompClient),
+                    //fullscreenDialog: true,
+                  ),
+                );
+              }
             });
       }
       break;
-    case "raiseAlert" :
+    case "raiseAlert":
       {
         return FloatingActionButton(
             backgroundColor: Colors.green,
             child: const Icon(Icons.notifications_active_outlined),
             onPressed: () {
+              if(PermissionCheck.check(PermissionCheck.RAISE_ALERT, context)){
               Navigator.push(
                 context,
                 MaterialPageRoute<void>(
-                  builder: (BuildContext context) => RaiseAlert(
-                      stompClient: stompClient),
+                  builder: (BuildContext context) =>
+                      RaiseAlert(stompClient: stompClient),
                   //fullscreenDialog: true,
                 ),
               );
+            }
             });
       }
       break;
-    default : {
-      return FloatingActionButton(
-          onPressed: () {
-            // Add your onPressed code here!
-          });
-    }
+    default:
+      {
+        return FloatingActionButton(onPressed: () {
+          // Add your onPressed code here!
+        });
+      }
   }
-
 }
-
 
 class TicketModel {
   var id;
@@ -539,8 +512,7 @@ class TicketModel {
   var status;
   var assignee = 'None';
 
-  Map<String, dynamic> toJson() =>
-      {
+  Map<String, dynamic> toJson() => {
         'date': date,
         'description': description,
         'site': site,
@@ -562,10 +534,7 @@ class SplitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
+    final screenWidth = MediaQuery.of(context).size.width;
     const breakpoint = 700.0;
     if (screenWidth >= breakpoint) {
       // widescreen: menu on the left, content on the right
@@ -624,6 +593,6 @@ class MyHttpOverrides extends HttpOverrides {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) =>
-      true; // add your localhost detection logic here if you want
+              true; // add your localhost detection logic here if you want
   }
 }
