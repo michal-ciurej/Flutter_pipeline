@@ -36,6 +36,8 @@ class Assets extends ChangeNotifier {
 
         asset.manufacturer = a['manufacturer'];
 
+        asset.sensorId = a['sensorId'];
+
         var index = assets.indexWhere((element) => element.id == asset.id);
 
         if (index == -1) {
@@ -105,6 +107,7 @@ class Asset {
   var manufacturer;
   var model;
   var location;
+  var sensorId;
 
 
   Icon getIcon(var size) {
@@ -137,6 +140,7 @@ class Asset {
         'manufacturer': manufacturer,
         'model': model,
         'location': location,
-        'id':id
+        'id':id,
+        'sensorId': sensorId
       };
 }

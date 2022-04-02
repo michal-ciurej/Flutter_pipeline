@@ -27,6 +27,7 @@ import 'AppMessages.dart';
 import 'AssetConsumer.dart';
 import 'Cases.dart';
 import 'LoginScreen.dart';
+import 'PermissionCheck.dart';
 import 'Site.dart';
 import 'Ticket.dart';
 import 'globals.dart' as globals;
@@ -229,8 +230,11 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                             // A SlidableAction can have an icon and/or a label.
                             if (element.ack == 'false') ...[
                               SlidableAction(
-                                onPressed: (BuildContext context) =>
-                                    {update(element.id)},
+                                onPressed: (BuildContext context)
+                                    {
+                                      if(PermissionCheck.check(PermissionCheck.ACK_ALARM, context))
+                                        update(element.id);
+                                    },
                                 backgroundColor: Color(0xff595959),
                                 foregroundColor: Colors.white,
                                 icon: Icons.task_alt_outlined,
@@ -238,7 +242,10 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                               )
                             ] else ...[
                               SlidableAction(
-                                onPressed: (BuildContext context) => {update(element.id)},
+                                onPressed: (BuildContext context)  {
+                                  if(PermissionCheck.check(PermissionCheck.CLOSE_ALARM, context))
+                                    update(element.id);
+                                },
                                 backgroundColor: Color(0xff595959),
                                 foregroundColor: Colors.white,
                                 icon: Icons.close_outlined,

@@ -128,6 +128,14 @@ class AddAsset extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyText1,
                         validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
                         decoration: InputDecoration(labelText: "Location"),
+                      ),
+                      FormBuilderTextField(
+                        onChanged: (value){asset.sensorId  =value;},
+                        maxLines: 1,
+                        name: 'sensorId',
+                        style: Theme.of(context).textTheme.bodyText1,
+                        //validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
+                        decoration: InputDecoration(labelText: "Sensor ID"),
                       )
                       ,const SizedBox(height: 30),
                       ElevatedButton(

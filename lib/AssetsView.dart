@@ -20,6 +20,7 @@ import 'package:printing/printing.dart';
 import 'AddAsset.dart';
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
+import 'PermissionCheck.dart';
 import 'ReplaceAsset.dart';
 import 'Site.dart';
 import 'Ticket.dart';
@@ -40,19 +41,14 @@ class _AssetsView extends State<AssetsView> {
   var toPrint = [];
 
   @override
-
   @override
   void initState() {
-
-
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     int count;
-
 
     if (MediaQuery.of(context).orientation == Orientation.landscape)
       count = 3;
@@ -93,7 +89,8 @@ class _AssetsView extends State<AssetsView> {
                                 child: Image.network(protocol +
                                     '://' +
                                     serverAddress +
-                                    port + '/api/static/' +
+                                    port +
+                                    '/api/static/' +
                                     sites.sites
                                         .firstWhere((element) =>
                                             element.name ==
@@ -109,87 +106,96 @@ class _AssetsView extends State<AssetsView> {
                               icon: const Icon(Icons.add_box),
                               tooltip: 'Create Asset',
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext context) => AddAsset(
-                                        site: sitesList[group_index],
-                                        stompClient: stompClient),
-                                    fullscreenDialog: true,
-                                  ),
-                                );
+                                if (PermissionCheck.check(
+                                    PermissionCheck.ADD_ASSET, context)) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          AddAsset(
+                                              site: sitesList[group_index],
+                                              stompClient: stompClient),
+                                      fullscreenDialog: true,
+                                    ),
+                                  );
+                                }
                               },
                             ),
                             IconButton(
                               icon: const Icon(Icons.print),
                               tooltip: 'Print ',
                               onPressed: () async {
-                                final doc = pw.Document();
-                                doc.addPage(
-                                    pw.Page(build: (pw.Context context) {
-                                  List<pw.Widget> barcodes = [];
+                                if (PermissionCheck.check(
+                                    PermissionCheck.PRINT_ASSET, context)) {
+                                  final doc = pw.Document();
+                                  doc.addPage(
+                                      pw.Page(build: (pw.Context context) {
+                                    List<pw.Widget> barcodes = [];
 
-                                  var start = 0;
-                                  var end =
-                                      toPrint.length > 3 ? 3 : toPrint.length;
+                                    var start = 0;
+                                    var end =
+                                        toPrint.length > 3 ? 3 : toPrint.length;
 
-                                  while (toPrint.length != 0 &&
-                                      start != toPrint.length) {
-                                    var row = toPrint.getRange(start, end);
-                                    start = end <= toPrint.length
-                                        ? end
-                                        : toPrint.length;
-                                    end = end + 3 < toPrint.length
-                                        ? end + 3
-                                        : toPrint.length;
+                                    while (toPrint.length != 0 &&
+                                        start != toPrint.length) {
+                                      var row = toPrint.getRange(start, end);
+                                      start = end <= toPrint.length
+                                          ? end
+                                          : toPrint.length;
+                                      end = end + 3 < toPrint.length
+                                          ? end + 3
+                                          : toPrint.length;
 
-                                    //toPrint.removeRange(0, 3);
-                                    List<pw.Widget> cells = [];
+                                      //toPrint.removeRange(0, 3);
+                                      List<pw.Widget> cells = [];
 
-                                    row.forEach((element) {
-                                      cells.add(pw.SizedBox(
-                                        width: 70,
-                                        height: 100,
-                                        child: pw.Column(children: [
-                                          pw.BarcodeWidget(
-                                            padding: pw.EdgeInsets.all(1.0),
-                                            data: element,
-                                            width: 50,
-                                            height: 50,
-                                            barcode: pw.Barcode.qrCode(),
-                                          ),
-                                          pw.Text(element)
-                                        ]),
-                                      ));
+                                      row.forEach((element) {
+                                        cells.add(pw.SizedBox(
+                                          width: 70,
+                                          height: 100,
+                                          child: pw.Column(children: [
+                                            pw.BarcodeWidget(
+                                              padding: pw.EdgeInsets.all(1.0),
+                                              data: element,
+                                              width: 50,
+                                              height: 50,
+                                              barcode: pw.Barcode.qrCode(),
+                                            ),
+                                            pw.Text(element)
+                                          ]),
+                                        ));
 
-                                      cells.add(pw.Padding(
-                                          padding: pw.EdgeInsets.only(
-                                              right: 140.0, bottom: 110.0)));
+                                        cells.add(pw.Padding(
+                                            padding: pw.EdgeInsets.only(
+                                                right: 140.0, bottom: 110.0)));
 
-                                      //toPrint.remove(element);
-                                    });
+                                        //toPrint.remove(element);
+                                      });
 
-                                    barcodes.add(pw.Row(children: [...cells]));
-                                  }
+                                      barcodes
+                                          .add(pw.Row(children: [...cells]));
+                                    }
 
-                                  return pw.Column(children: barcodes);
+                                    return pw.Column(children: barcodes);
 
-                                  // Center
-                                })); // Page
+                                    // Center
+                                  })); // Page
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute<void>(
-                                    builder: (BuildContext context) => Scaffold(
-                                        appBar: AppBar(
-                                          title: Text("Asset Tag"),
-                                        ),
-                                        body: PdfPreview(
-                                          build: (format) => doc.save(),
-                                        )),
-                                    fullscreenDialog: true,
-                                  ),
-                                );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          Scaffold(
+                                              appBar: AppBar(
+                                                title: Text("Asset Tag"),
+                                              ),
+                                              body: PdfPreview(
+                                                build: (format) => doc.save(),
+                                              )),
+                                      fullscreenDialog: true,
+                                    ),
+                                  );
+                                }
                               },
                             )
                           ],
@@ -216,24 +222,30 @@ class _AssetsView extends State<AssetsView> {
                                 ListTile(
                                   leading: IconButton(
                                     iconSize: 30,
-                                    icon: const Icon(Icons.published_with_changes_outlined),
+                                    icon: const Icon(
+                                        Icons.published_with_changes_outlined),
                                     tooltip: 'Replace Asset',
                                     onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute<void>(
-                                                builder: (BuildContext context) => ReplaceAsset(
+                                      if (PermissionCheck.check(
+                                          PermissionCheck.SWAP_ASSET,
+                                          context)) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute<void>(
+                                            builder: (BuildContext context) =>
+                                                ReplaceAsset(
                                                     site: sites.sites[1].name,
                                                     stompClient: stompClient,
-                                                    originalAsset:enabledAssets
-                                                    .where((element) =>
-                                                  element.site ==
-                                                  sitesList[group_index])
-                                                  .elementAt(index) ),
-                                                //fullscreenDialog: true,
-                                              ),
-                                            );
-
+                                                    originalAsset: enabledAssets
+                                                        .where((element) =>
+                                                            element.site ==
+                                                            sitesList[
+                                                                group_index])
+                                                        .elementAt(index)),
+                                            //fullscreenDialog: true,
+                                          ),
+                                        );
+                                      }
                                     },
                                   ),
                                   title: Text(
@@ -347,24 +359,20 @@ class _AssetsView extends State<AssetsView> {
                                               : Colors.blue,
                                           onPressed: () async {
                                             setState(() {
-
-                                            var asset = enabledAssets
+                                              var asset = enabledAssets
                                                   .where((element) =>
-                                              element.site ==
-                                                  sitesList[group_index])
+                                                      element.site ==
+                                                      sitesList[group_index])
                                                   .elementAt(index)
                                                   .name
                                                   .toString();
 
-                                            if(toPrint.contains(asset)){
-                                              toPrint.remove(asset);
-                                            }else{
-                                              toPrint.add(asset);
-                                            }
-
-
+                                              if (toPrint.contains(asset)) {
+                                                toPrint.remove(asset);
+                                              } else {
+                                                toPrint.add(asset);
+                                              }
                                             });
-
                                           },
                                           icon: Icon(Icons
                                               .dashboard_customize_outlined)),

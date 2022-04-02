@@ -230,6 +230,7 @@ class UserDetails {
   var workflowSteps = [];
   var assetTypes = [];
   var assetClasses = [];
+  var permissionToggles=[];
 
 
 
@@ -245,5 +246,6 @@ class UserDetails {
     this.assetTypes = json['assetTypes'];
     this.assetClasses = json['assetClasses'];
     cases.setWorkflowSteps(workflowSteps);
+    this.permissionToggles = json['permissionToggles']!;
   }
 }
