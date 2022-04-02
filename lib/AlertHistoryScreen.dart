@@ -66,6 +66,9 @@ class _AlertHistoryScreen extends State<AlertHistoryScreen> {
       var data = jsonDecode(value.body);
       setState(() {
         history.addAll(AlarmMessagePayload().fromJson(data));
+        history.sort((a, b) => DateFormat("HH:mm dd-MMM-yyyy")
+            .parse(b.dateTime)
+            .compareTo(DateFormat("HH:mm dd-MMM-yyyy").parse(a.dateTime)));
       });
     });
 

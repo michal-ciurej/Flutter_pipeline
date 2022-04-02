@@ -41,17 +41,17 @@ import 'Ticket.dart';
 
 late var serverAddress;
 //remote debugging
-//var protocol = 'https';
-//var socketProtocol = 'wss';
-//var port = ':443/landscaper-service';
+var protocol = 'https';
+var socketProtocol = 'wss';
+var port = ':443/landscaper-service';
 var fabInRail =
     userDetails.featureToggles.contains("raiseAlert") ? true : false;
 var fabMode = 'raiseAlert';
 late var token;
 //local environment
-var protocol = 'http';
-var socketProtocol = 'ws';
-var port = ':8080';
+//var protocol = 'http';
+//var socketProtocol = 'ws';
+//var port = ':8080';
 
 void onConnect(StompFrame frame) {
   stompClient.subscribe(
