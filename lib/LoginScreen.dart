@@ -141,7 +141,7 @@ class _LoginScreen extends State<LoginScreen> {
           color: Colors.transparent,
          image: DecorationImage(
           image: new NetworkImage(
-              protocol + '://' + serverAddress + port + '/api/static/youngsBackground.png'),
+              protocol + '://' + serverAddress + port + '/api/static/customerBackground.png'),
             fit: BoxFit.cover,
           ),
         ),
@@ -168,7 +168,7 @@ class _LoginScreen extends State<LoginScreen> {
         //  savedPassword: "TestPassword",
       //    title: dotenv.env['CUSTOMER'].toString(),
           logo: new NetworkImage(
-              protocol + '://' + serverAddress + port + '/api/static/youngsLogo.png'),
+              protocol + '://' + serverAddress + port + '/api/static/customerLogo.png'),
           onLogin: _authUser,
           //onSignup: _signupUser,
           /*additionalSignupFields: [
