@@ -74,6 +74,11 @@ class _LoginScreen extends State<LoginScreen> {
 
       print(userDetails.loginMessage);
       if (userDetails.loggedIn == true) {
+
+        stompClient.send(
+            destination: '/app/conversations',
+            body: userDetails.firstName
+        );
         return "";
       }
 

@@ -3,9 +3,11 @@ import 'dart:io';
 
 import 'package:adaptive_navigation/adaptive_navigation.dart';
 import 'package:alerts/AlertsScreen.dart';
+import 'package:alerts/Conversations.dart';
 import 'package:alerts/LineChart.dart';
 import 'package:alerts/TicketCalender.dart';
 import 'package:alerts/WorkflowKanban.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,6 +31,7 @@ import 'Cases.dart';
 import 'CasesScreen.dart';
 import 'HeatMap.dart';
 import 'LoginScreen.dart';
+import 'Messages.dart';
 import 'NfcManager.dart';
 import 'PermissionCheck.dart';
 import 'RaiseAlert.dart';
@@ -41,17 +44,17 @@ import 'Ticket.dart';
 
 late var serverAddress;
 //remote debugging
-var protocol = 'https';
-var socketProtocol = 'wss';
-var port = ':443/landscaper-service';
+//var protocol = 'https';
+//var socketProtocol = 'wss';
+//var port = ':443/landscaper-service';
 var fabInRail =
     userDetails.featureToggles.contains("raiseAlert") ? true : false;
 var fabMode = 'raiseAlert';
 late var token;
 //local environment
-//var protocol = 'http';
-//var socketProtocol = 'ws';
-//var port = ':8080';
+var protocol = 'http';
+var socketProtocol = 'ws';
+var port = ':8080';
 
 void onConnect(StompFrame frame) {
   stompClient.subscribe(
@@ -93,6 +96,26 @@ void onConnect(StompFrame frame) {
       assets.add(result);
     },
   );
+  stompClient.subscribe(
+    destination: '/user/topic/conversations',
+    callback: (frame) {
+      print("Recieved user conversations");
+      List<Map<String, dynamic>> result =
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      conversations.add(result);
+    },
+  );
+  stompClient.subscribe(
+    destination: '/topic/conversations',
+    callback: (frame) {
+      print("Recieved all the conversations");
+      List<Map<String, dynamic>> result =
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      conversations.add(result);
+    },
+  );
+
+
 
   stompClient.subscribe(
     destination: '/user/topic/reply',
@@ -136,6 +159,8 @@ void onConnect(StompFrame frame) {
     destination: '/app/assets',
   );
 
+
+
   stompClient.send(destination: '/app/cases', body: '573');
 
   stompClient.subscribe(
@@ -174,6 +199,9 @@ Sites sites = new Sites();
 Cases cases = new Cases();
 Assets assets = new Assets();
 UserDetails userDetails = UserDetails("");
+Conversations conversations = new Conversations();
+
+
 
 int _currentIndex = 0;
 
@@ -198,7 +226,9 @@ void main() async {
         ChangeNotifierProvider(create: (context) => sites),
         ChangeNotifierProvider(create: (context) => messages),
         ChangeNotifierProvider(create: (context) => cases),
-        ChangeNotifierProvider(create: (context) => assets)
+        ChangeNotifierProvider(create: (context) => assets),
+        ChangeNotifierProvider(create: (context) => conversations)
+
       ],
       child: const MyApp(),
     ),
@@ -402,6 +432,25 @@ class _MyHomePageState extends State<MyHomePage> {
       destinations: _allDestinations.sublist(0, _destinationCount),
       appBar: AdaptiveAppBar(
           actions: <Widget>[
+            Badge(
+                position:BadgePosition.topStart(),
+                badgeContent: Text('3'),
+                child: IconButton(
+              color:Colors.black,
+              icon: const Icon(Icons.message),
+              tooltip: 'Messages',
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext
+                    context) =>
+                        Chats(),
+                     //fullscreenDialog: true,
+                  ),
+                );
+              },
+            )),
             if (userDetails.featureToggles.contains("qr")) ...[
               IconButton(
                 icon: const Icon(Icons.qr_code_scanner),
