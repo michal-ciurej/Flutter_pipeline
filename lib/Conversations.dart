@@ -21,18 +21,39 @@ class Conversations extends ChangeNotifier {
 
       for (Map<String, dynamic> message in a['messages']) {
 
-        conversation.messages.add( types.TextMessage(
-          author: types.User.fromJson(message['author'] as Map<String, dynamic>),
-          createdAt: int.parse(message['createdAt']),
-          id: message['id'] ,
-          //metadata: message['metadata'] as Map<String, dynamic>?,
-          roomId: message['roomId'] ,
-          text: message['text'],
-          type: types.MessageType.text,
-        ));
-
+        if(message['type'] == "text") {
+          conversation.messages.add(types.TextMessage(
+            author: types.User.fromJson(
+                message['author'] as Map<String, dynamic>),
+            createdAt: int.parse(message['createdAt']),
+            id: message['id'],
+            //metadata: message['metadata'] as Map<String, dynamic>?,
+            roomId: message['roomId'],
+            text: message['text'],
+            // repliedMessage: message['repliedMessage'],
+            type: types.MessageType.text,
+          ));
+        }
+        if(message['type'] == "image") {
+          conversation.messages.add(types.ImageMessage(
+              author: types.User.fromJson(
+                  message['author'] as Map<String, dynamic>),
+              createdAt: int.parse(message['createdAt']),
+              height: double.parse(message['height']),
+              id: message['id'],
+              name: message['name'],
+              size: num.parse(message['size']),
+              uri: message['uri'],
+              width: double.parse(message['width']),
+              roomId: conversation.id,
+              status: types.Status.delivered
+          ));
+        }
 
       }
+
+      conversation.messages.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+
       conversation.targets=a['participants'];
 
 

@@ -48,7 +48,7 @@ late var serverAddress;
 //var socketProtocol = 'wss';
 //var port = ':443/landscaper-service';
 var fabInRail =
-    userDetails.featureToggles.contains("raiseAlert") ? true : false;
+userDetails.featureToggles.contains("raiseAlert") ? true : false;
 var fabMode = 'raiseAlert';
 late var token;
 //local environment
@@ -61,7 +61,7 @@ void onConnect(StompFrame frame) {
     destination: '/topic/messages',
     callback: (frame) {
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       messages.add(result);
     },
   );
@@ -71,7 +71,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the sites");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       sites.add(result);
       print("Finished adding  all the sites");
     },
@@ -82,7 +82,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the assets");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       assets.add(result);
     },
   );
@@ -92,7 +92,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Recieved all the assets");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       assets.add(result);
     },
   );
@@ -116,13 +116,12 @@ void onConnect(StompFrame frame) {
   );
 
 
-
   stompClient.subscribe(
     destination: '/user/topic/reply',
     callback: (frame) {
       print("Recieved all the alarms");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       messages.add(result);
     },
   );
@@ -132,7 +131,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Receiving and adding cases");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       cases.add(result);
     },
   );
@@ -142,7 +141,7 @@ void onConnect(StompFrame frame) {
     callback: (frame) {
       print("Receiving and adding cases");
       List<Map<String, dynamic>> result =
-          List<Map<String, dynamic>>.from(json.decode(frame.body!));
+      List<Map<String, dynamic>>.from(json.decode(frame.body!));
       cases.add(result);
     },
   );
@@ -160,14 +159,13 @@ void onConnect(StompFrame frame) {
   );
 
 
-
   stompClient.send(destination: '/app/cases', body: '573');
 
   stompClient.subscribe(
     destination: '/topic/status',
     callback: (frame) {
       Map<String, dynamic> result =
-          Map<String, dynamic>.from(json.decode(frame.body!));
+      Map<String, dynamic>.from(json.decode(frame.body!));
       messages.update(result);
     },
   );
@@ -202,7 +200,6 @@ UserDetails userDetails = UserDetails("");
 Conversations conversations = new Conversations();
 
 
-
 int _currentIndex = 0;
 
 void main() async {
@@ -213,7 +210,7 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       systemNavigationBarColor:
-          SystemUiOverlayStyle.dark.systemNavigationBarColor,
+      SystemUiOverlayStyle.dark.systemNavigationBarColor,
     ),
   );
   HttpOverrides.global = MyHttpOverrides();
@@ -298,7 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
 // Pass this method to the child page.
   void _update(String id) {
@@ -336,14 +333,20 @@ class _MyHomePageState extends State<MyHomePage> {
         NfcManager(client: stompClient),
       ],
 
-      if (MediaQuery.of(context).size.width > 700 &&
+      if (MediaQuery
+          .of(context)
+          .size
+          .width > 700 &&
           userDetails.featureToggles.contains("kanban")) ...[
         //HeatMap(client: stompClient),
         WorkflowKanban(client: stompClient),
       ],
 
       //(ticket: _createTicket),
-      if (MediaQuery.of(context).size.width < 700 &&
+      if (MediaQuery
+          .of(context)
+          .size
+          .width < 700 &&
           userDetails.featureToggles.contains("cases")) ...[
         CasesScreen(update: _update, ticket: _raiseTicket, client: stompClient),
       ],
@@ -359,12 +362,18 @@ class _MyHomePageState extends State<MyHomePage> {
       if (userDetails.featureToggles.contains("nfc")) ...[
         AdaptiveScaffoldDestination(title: 'NFC', icon: Icons.nfc),
       ],
-      if (MediaQuery.of(context).size.width > 700 &&
+      if (MediaQuery
+          .of(context)
+          .size
+          .width > 700 &&
           userDetails.featureToggles.contains("kanban")) ...[
         AdaptiveScaffoldDestination(
             title: 'Ops Board', icon: Icons.space_dashboard),
       ],
-      if (MediaQuery.of(context).size.width < 700 &&
+      if (MediaQuery
+          .of(context)
+          .size
+          .width < 700 &&
           userDetails.featureToggles.contains("cases")) ...[
         AdaptiveScaffoldDestination(
             title: 'Tickets', icon: Icons.confirmation_number),
@@ -418,86 +427,89 @@ class _MyHomePageState extends State<MyHomePage> {
     bool _includeBaseDestinationsInMenu = true;
 
     return AdaptiveNavigationScaffold(
-      floatingActionButton: fabInRail ? getActionButtong(context) : null,
-      navigationTypeResolver: (context) {
-        if (MediaQuery.of(context).size.width > 700) {
-          return NavigationType.rail;
-        } else {
-          return NavigationType.bottom;
-        }
-      },
-      onDestinationSelected: _onItemTapped,
-      selectedIndex: _currentIndex,
-      drawerHeader: Text("Drawer"),
-      destinations: _allDestinations.sublist(0, _destinationCount),
-      appBar: AdaptiveAppBar(
-          actions: <Widget>[
-            Badge(
-                position:BadgePosition.topStart(),
-                badgeContent: Text('3'),
-                child: IconButton(
-              color:Colors.black,
-              icon: const Icon(Icons.message),
-              tooltip: 'Messages',
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext
-                    context) =>
-                        Chats(),
-                     //fullscreenDialog: true,
-                  ),
-                );
-              },
-            )),
-            if (userDetails.featureToggles.contains("qr")) ...[
-              IconButton(
-                icon: const Icon(Icons.qr_code_scanner),
-                tooltip: 'Identify Asset',
-                onPressed: () async {
-                  var hasFound = false;
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) => Scaffold(
-                            appBar: AppBar(
-                              title: Text("Identify Asset"),
-                            ),
-                            body: AppBarcodeScannerWidget.defaultStyle(
-                              resultCallback: (String code) {
-                                if (!hasFound) {
-                                  Navigator.pop(context);
-                                  hasFound = true;
-                                  AssetsView().showFindMyDialog(context, code);
-                                }
-                              },
-                            )),
-                        fullscreenDialog: false,
-                      ));
-                },
-              )
-            ]
-          ],
-          backgroundColor: Colors.white,
-          toolbarHeight: 42,
-          title: Text('MyBuildings.live',
-              style: GoogleFonts.roboto(
-                  fontSize: 12,
-                  color: Color(0xFF136d1b),
-                  fontWeight: FontWeight.bold)),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
-          leading: Column(children: <Widget>[
-            Text(
-                _packageInfo.version.toString() +
-                    '+' +
-                    _packageInfo.buildNumber.toString(),
-                style: TextStyle(color: Colors.white))
-          ])),
-      body: _children[_currentIndex],
-      fabInRail: true,
-      includeBaseDestinationsInMenu: _includeBaseDestinationsInMenu,
+        floatingActionButton: fabInRail ? getActionButtong(context) : null,
+        navigationTypeResolver: (context) {
+          if (MediaQuery
+              .of(context)
+              .size
+              .width > 700) {
+            return NavigationType.rail;
+          } else {
+            return NavigationType.bottom;
+          }
+        },
+        onDestinationSelected: _onItemTapped,
+        selectedIndex: _currentIndex,
+        drawerHeader: Text("Drawer"),
+        destinations: _allDestinations.sublist(0, _destinationCount),
+        appBar: AdaptiveAppBar(
+            actions: <Widget>[
+        Badge(
+        position:BadgePosition.topStart(),
+        badgeContent: Text(conversations.conversations.length.toString()),
+    child: IconButton(
+    color:Colors.black,
+    icon: const Icon(Icons.message),
+    tooltip: 'Messages',
+    onPressed: () async {
+    Navigator.push(
+    context,
+    MaterialPageRoute<void>(
+    builder: (BuildContext
+    context) =>
+    Chats(),
+    //fullscreenDialog: true,
+    ),
+    );
+    },
+    )),
+    if (userDetails.featureToggles.contains("qr")) ...[
+    IconButton(
+    icon: const Icon(Icons.qr_code_scanner),
+    tooltip: 'Identify Asset',
+    onPressed: () async {
+    var hasFound = false;
+    Navigator.push(
+    context,
+    MaterialPageRoute<void>(
+    builder: (BuildContext context) => Scaffold(
+    appBar: AppBar(
+    title: Text("Identify Asset"),
+    ),
+    body: AppBarcodeScannerWidget.defaultStyle(
+    resultCallback: (String code) {
+    if (!hasFound) {
+    Navigator.pop(context);
+    hasFound = true;
+    AssetsView().showFindMyDialog(context, code);
+    }
+    },
+    )),
+    fullscreenDialog: false,
+    ));
+    },
+    )
+    ]
+    ],
+    backgroundColor: Colors.white,
+    toolbarHeight: 42,
+    title: Text('MyBuildings.live',
+    style: GoogleFonts.roboto(
+    fontSize: 12,
+    color: Color(0xFF136d1b),
+    fontWeight: FontWeight.bold)),
+    shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
+    leading: Column(children: <Widget>[
+    Text(
+    _packageInfo.version.toString() +
+    '+' +
+    _packageInfo.buildNumber.toString(),
+    style: TextStyle(color: Colors.white))
+    ])),
+    body: _children[_currentIndex],
+    fabInRail: true,
+    includeBaseDestinationsInMenu: _includeBaseDestinationsInMenu,
     );
   }
 }
@@ -514,8 +526,10 @@ FloatingActionButton getActionButtong(BuildContext context) {
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) => AddAsset(
-                        site: sites.sites[1].name, stompClient: stompClient),
+                    builder: (BuildContext context) =>
+                        AddAsset(
+                            site: sites.sites[1].name,
+                            stompClient: stompClient),
                     //fullscreenDialog: true,
                   ),
                 );
@@ -529,16 +543,16 @@ FloatingActionButton getActionButtong(BuildContext context) {
             backgroundColor: Colors.green,
             child: const Icon(Icons.notifications_active_outlined),
             onPressed: () {
-              if(PermissionCheck.check(PermissionCheck.RAISE_ALERT, context)){
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (BuildContext context) =>
-                      RaiseAlert(stompClient: stompClient),
-                  //fullscreenDialog: true,
-                ),
-              );
-            }
+              if (PermissionCheck.check(PermissionCheck.RAISE_ALERT, context)) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) =>
+                        RaiseAlert(stompClient: stompClient),
+                    //fullscreenDialog: true,
+                  ),
+                );
+              }
             });
       }
       break;
@@ -561,7 +575,8 @@ class TicketModel {
   var status;
   var assignee = 'None';
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'date': date,
         'description': description,
         'site': site,
@@ -583,7 +598,10 @@ class SplitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
     const breakpoint = 700.0;
     if (screenWidth >= breakpoint) {
       // widescreen: menu on the left, content on the right
@@ -642,6 +660,6 @@ class MyHttpOverrides extends HttpOverrides {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) =>
-              true; // add your localhost detection logic here if you want
+      true; // add your localhost detection logic here if you want
   }
 }
