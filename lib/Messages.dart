@@ -21,6 +21,8 @@ import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
+import 'PermissionCheck.dart';
+
 class ChatMessages extends StatefulWidget {
   Conversation conversation;
 
@@ -44,9 +46,8 @@ class _ChatMessages extends State<ChatMessages> {
     });
   }*/
 
-  List<types.Message> _messages = [];
   final _user =
-      types.User(id: userDetails.firstName!, firstName: userDetails.firstName!);
+  types.User(id: userDetails.firstName!, firstName: userDetails.firstName!);
 
   @override
   void initState() {
@@ -105,13 +106,15 @@ class _ChatMessages extends State<ChatMessages> {
 
     if (result != null && result.files.single.path != null) {
       final message = types.FileMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: const Uuid().v4(),
-        name: result.files.single.name,
-        size: result.files.single.size,
-        uri: result.files.single.path!,
-      );
+          author: _user,
+          createdAt: DateTime
+              .now()
+              .millisecondsSinceEpoch,
+          id: const Uuid().v4(),
+          name: result.files.single.name,
+          size: result.files.single.size,
+          uri: result.files.single.path!,
+          status: types.Status.sent);
 
       _addMessage(message);
     }
@@ -132,7 +135,9 @@ class _ChatMessages extends State<ChatMessages> {
 
       final message = types.ImageMessage(
           author: _user,
-          createdAt: DateTime.now().millisecondsSinceEpoch,
+          createdAt: DateTime
+              .now()
+              .millisecondsSinceEpoch,
           height: image.height.toDouble(),
           id: messageId,
           name: result.name,
@@ -142,9 +147,7 @@ class _ChatMessages extends State<ChatMessages> {
               serverAddress +
               port +
               '/api/chatAssets/' +
-              messageId +
-              "." +
-              result.name.split('.').last,
+              messageId,
           width: image.width.toDouble(),
           roomId: conversation.id,
           status: types.Status.delivered);
@@ -154,7 +157,7 @@ class _ChatMessages extends State<ChatMessages> {
       upload.image = base64.encode(bytes);
       upload.filename = result.name;
 
-      final response = http.post(
+      final response = await http.post(
         Uri.parse(protocol +
             '://' +
             serverAddress +
@@ -171,17 +174,21 @@ class _ChatMessages extends State<ChatMessages> {
   }
 
   void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
-        author: _user,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-        id: const Uuid().v4(),
-        text: message.text,
-        roomId: conversation.id,
-        status: types.Status.delivered
+    if (PermissionCheck.check(PermissionCheck.SEND_MESSAGE, context)) {
+      final textMessage = types.TextMessage(
+          author: _user,
+          createdAt: DateTime
+              .now()
+              .millisecondsSinceEpoch,
+          id: const Uuid().v4(),
+          text: message.text,
+          roomId: conversation.id,
+          status: types.Status.delivered
         //repliedMessage: conversation.messages.length > 0 ? conversation.messages[conversation.messages.length-1].id : null
-        );
+      );
 //send this to the server.
-    _addMessage(textMessage);
+      _addMessage(textMessage);
+    }
   }
 
   void _handleMessageTap(BuildContext context, types.Message message) async {
@@ -190,16 +197,16 @@ class _ChatMessages extends State<ChatMessages> {
     }
   }
 
-  void _handlePreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
-  ) {
-    final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = _messages[index].copyWith(previewData: previewData);
+  void _handlePreviewDataFetched(types.TextMessage message,
+      types.PreviewData previewData,) {
+    final index =
+    conversation.messages.indexWhere((element) => element.id == message.id);
+    final updatedMessage =
+    conversation.messages[index].copyWith(previewData: previewData);
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       setState(() {
-        _messages[index] = updatedMessage;
+        conversation.messages[index] = updatedMessage;
       });
     });
   }
@@ -213,15 +220,19 @@ class _ChatMessages extends State<ChatMessages> {
     );
 
     setState(() {
-      _messages.insert(0, message);
+      conversation.messages.insert(0, message);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    print('Boom we got here');
+
     return Scaffold(
       appBar: AppBar(
-        iconTheme: Theme.of(context).iconTheme,
+        iconTheme: Theme
+            .of(context)
+            .iconTheme,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -249,19 +260,24 @@ class _ChatMessages extends State<ChatMessages> {
                         height: 25,
                         //width: 32,
                         color: Colors.transparent,
-                        child: Text("Message:",
-                            style: Theme.of(context)
+                        child: Text(
+                            "Chatting to :" + conversation.targets.join(", "),
+                            style: Theme
+                                .of(context)
                                 .textTheme
                                 .bodyText2
                                 ?.copyWith(
-                                    fontSize: 20,
-                                    color:
-                                        Theme.of(context).colorScheme.primary)
-                            //GoogleFonts.roboto(
-                            //    fontSize: 14,
-                            //    fontWeight:
-                            //    FontWeight.w200)
-                            ),
+                                fontSize: 20,
+                                color:
+                                Theme
+                                    .of(context)
+                                    .colorScheme
+                                    .primary)
+                          //GoogleFonts.roboto(
+                          //    fontSize: 14,
+                          //    fontWeight:
+                          //    FontWeight.w200)
+                        ),
                       ),
                     )
                   ],
@@ -276,23 +292,21 @@ class _ChatMessages extends State<ChatMessages> {
       body: SafeArea(
           bottom: false,
           child: Consumer<Conversations>(builder: (context, data, _) {
+            conversation = Provider
+                .of<Conversations>(context)
+                .conversations
+                .where((element) => element.id == conversation.id)
+                .first;
 
-            conversation = Provider.of<Conversations>(context)
-                  .conversations
-                  .where((element) => element.id == conversation.id).first;
+            print(conversation.id);
+            conversations.updateStatus(conversation.id);
+            //_messages.clear();
+            //_messages.addAll(conversation.messages);
 
-            _messages.clear();
-            _messages.addAll(conversation.messages);
+            //_messages.sort((a, b) => b.createdAt!.compareTo(a.createdAt!)) as List<types.Message>;
 
-
-            for (var i = 0; i < _messages.length; i++) {
-              _messages[i] = _messages[i].copyWith(status: types.Status.seen);
-            }
-
-              //_messages.sort((a, b) => b.createdAt!.compareTo(a.createdAt!)) as List<types.Message>;
-
-              return Chat(
-              messages: _messages,
+            return Chat(
+              messages: conversation.messages,
               showUserNames: true,
               onAttachmentPressed: _handleAtachmentPressed,
               onMessageTap: _handleMessageTap,
@@ -347,17 +361,17 @@ class _Chats extends State<Chats> {
             TextButton(
               child: const Text('Create'),
               onPressed: () {
-                var conversation = Conversation(userDetails.firstName, participants);
+                var conversation =
+                Conversation(userDetails.firstName, participants);
 
-                setState(() {
-                  conversations.conversations.add(conversation);
-                });
+                conversations.create(conversation);
+
                 Navigator.of(context).pop();
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ChatMessages(
-                        conversation),
+                    builder: (BuildContext context) =>
+                        ChatMessages(conversation),
                     //  fullscreenDialog: true,
                   ),
                 );
@@ -379,7 +393,9 @@ class _Chats extends State<Chats> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          iconTheme: Theme.of(context).iconTheme,
+          iconTheme: Theme
+              .of(context)
+              .iconTheme,
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -407,6 +423,29 @@ class _Chats extends State<Chats> {
                           height: 25,
                           //width: 32,
                           color: Colors.transparent,
+                          child: Text(
+                              "Groups ",
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .bodyText2
+                                  ?.copyWith(
+                                  fontSize: 20,
+                                  color:
+                                  Theme
+                                      .of(context)
+                                      .colorScheme
+                                      .primary)
+
+                          ),
+                        ),
+                      ),
+                      TableCell(
+                        verticalAlignment: TableCellVerticalAlignment.top,
+                        child: Container(
+                          height: 25,
+                          alignment: Alignment.centerLeft,
+                          color: Colors.transparent,
                           child: IconButton(
                             color: Colors.black,
                             icon: const Icon(Icons.add),
@@ -428,10 +467,15 @@ class _Chats extends State<Chats> {
         ),
         body: ListView.separated(
           shrinkWrap: true,
-          itemCount: Provider.of<Conversations>(context).conversations.length,
+          itemCount: Provider
+              .of<Conversations>(context)
+              .conversations
+              .length,
           itemBuilder: (context, index) {
             var element =
-                Provider.of<Conversations>(context).conversations[index];
+            Provider
+                .of<Conversations>(context)
+                .conversations[index];
             return ListTile(
                 onTap: () {
                   Navigator.push(
@@ -442,8 +486,23 @@ class _Chats extends State<Chats> {
                     ),
                   );
                 },
+                trailing:
+                IconButton(
+                  icon: const Icon(Icons.delete_outlined),
+                  onPressed: () {
+                    stompClient.send(
+                      destination: '/app/conversation/delete',
+                      body: json.encode(conversations.conversations[index].toJson()),
+                    );
+                  },
+                ),
                 title: Text(
-                    conversations.conversations[index].targets.toString()));
+            conversations.conversations[index].targets.join(", ") +
+                (!conversations.conversations[index].messages.isEmpty
+                    ? conversations
+                    .conversations[index].messages[0].showStatus
+                    .toString()
+                    : " ")));
           },
           separatorBuilder: (context, index) {
             return Divider();
@@ -457,10 +516,12 @@ class Conversation {
   var source;
   var targets = [];
   List<types.Message> messages = [];
+  var deleted;
 
   Conversation(this.source, this.targets);
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         'id': id,
         'author': source,
         'participants': targets,

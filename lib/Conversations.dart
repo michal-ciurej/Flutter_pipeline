@@ -16,10 +16,14 @@ class Conversations extends ChangeNotifier {
       Conversation conversation = Conversation(null, []);
       conversation.id = a['id'];
       conversation.source = a['author'];
+      conversation.deleted = a['deleted'];
+
 
 
 
       for (Map<String, dynamic> message in a['messages']) {
+
+
 
         if(message['type'] == "text") {
           conversation.messages.add(types.TextMessage(
@@ -32,6 +36,7 @@ class Conversations extends ChangeNotifier {
             text: message['text'],
             // repliedMessage: message['repliedMessage'],
             type: types.MessageType.text,
+            status: types.Status.values.byName(message['status'].toString())
           ));
         }
         if(message['type'] == "image") {
@@ -46,7 +51,7 @@ class Conversations extends ChangeNotifier {
               uri: message['uri'],
               width: double.parse(message['width']),
               roomId: conversation.id,
-              status: types.Status.delivered
+              status: types.Status.values.byName(message['status'].toString())
           ));
         }
 
@@ -62,12 +67,36 @@ class Conversations extends ChangeNotifier {
           if(conversations[i].id == conversation.id)
             conversations.removeAt(i);
         }
-        this.conversations.add(conversation);
+        if(!conversation.deleted)
+          this.conversations.add(conversation);
 
       }
     }
     notifyListeners();
 
+
+  }
+
+  void updateStatus(String id) {
+
+    for (var i = 0; i < conversations.length; i++) {
+
+      if(conversations[i].id==id) {
+        for(var j =0; j< conversations[i].messages.length ;j++) {
+          conversations[i].messages[j] =
+              conversations[i].messages[j].copyWith(status: types.Status.seen);
+        }
+      }
+      notifyListeners();
+      return;
+    }
+
+
+  }
+
+  void create(Conversation conversation) {
+    conversations.add(conversation);
+    notifyListeners();
 
   }
 }

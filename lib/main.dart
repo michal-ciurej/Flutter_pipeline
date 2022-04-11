@@ -22,6 +22,7 @@ import 'package:stomp_dart_client/stomp_frame.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'AddAsset.dart';
 import 'AppMessages.dart';
 import 'AssetConsumer.dart';
@@ -115,7 +116,6 @@ void onConnect(StompFrame frame) {
     },
   );
 
-
   stompClient.subscribe(
     destination: '/user/topic/reply',
     callback: (frame) {
@@ -158,7 +158,6 @@ void onConnect(StompFrame frame) {
     destination: '/app/assets',
   );
 
-
   stompClient.send(destination: '/app/cases', body: '573');
 
   stompClient.subscribe(
@@ -199,7 +198,6 @@ Assets assets = new Assets();
 UserDetails userDetails = UserDetails("");
 Conversations conversations = new Conversations();
 
-
 int _currentIndex = 0;
 
 void main() async {
@@ -225,7 +223,6 @@ void main() async {
         ChangeNotifierProvider(create: (context) => cases),
         ChangeNotifierProvider(create: (context) => assets),
         ChangeNotifierProvider(create: (context) => conversations)
-
       ],
       child: const MyApp(),
     ),
@@ -426,7 +423,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
     bool _includeBaseDestinationsInMenu = true;
 
-    return AdaptiveNavigationScaffold(
+    return Consumer<Conversations>(builder: (context, data, _) {
+      var newMessages = 0;
+    print('showing adaptive scaf');
+      Provider.of<Conversations>(context).conversations.forEach((con) {
+        con.messages.forEach((msg) {
+          if (msg.status == types.Status.delivered)
+            newMessages++;
+          print(newMessages);
+        });
+      });
+
+      return AdaptiveNavigationScaffold(
         floatingActionButton: fabInRail ? getActionButtong(context) : null,
         navigationTypeResolver: (context) {
           if (MediaQuery
@@ -444,73 +452,76 @@ class _MyHomePageState extends State<MyHomePage> {
         destinations: _allDestinations.sublist(0, _destinationCount),
         appBar: AdaptiveAppBar(
             actions: <Widget>[
-        Badge(
-        position:BadgePosition.topStart(),
-        badgeContent: Text(conversations.conversations.length.toString()),
-    child: IconButton(
-    color:Colors.black,
-    icon: const Icon(Icons.message),
-    tooltip: 'Messages',
-    onPressed: () async {
-    Navigator.push(
-    context,
-    MaterialPageRoute<void>(
-    builder: (BuildContext
-    context) =>
-    Chats(),
-    //fullscreenDialog: true,
-    ),
-    );
-    },
-    )),
-    if (userDetails.featureToggles.contains("qr")) ...[
-    IconButton(
-    icon: const Icon(Icons.qr_code_scanner),
-    tooltip: 'Identify Asset',
-    onPressed: () async {
-    var hasFound = false;
-    Navigator.push(
-    context,
-    MaterialPageRoute<void>(
-    builder: (BuildContext context) => Scaffold(
-    appBar: AppBar(
-    title: Text("Identify Asset"),
-    ),
-    body: AppBarcodeScannerWidget.defaultStyle(
-    resultCallback: (String code) {
-    if (!hasFound) {
-    Navigator.pop(context);
-    hasFound = true;
-    AssetsView().showFindMyDialog(context, code);
-    }
-    },
-    )),
-    fullscreenDialog: false,
-    ));
-    },
-    )
-    ]
-    ],
-    backgroundColor: Colors.white,
-    toolbarHeight: 42,
-    title: Text('MyBuildings.live',
-    style: GoogleFonts.roboto(
-    fontSize: 12,
-    color: Color(0xFF136d1b),
-    fontWeight: FontWeight.bold)),
-    shape: RoundedRectangleBorder(
-    borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
-    leading: Column(children: <Widget>[
-    Text(
-    _packageInfo.version.toString() +
-    '+' +
-    _packageInfo.buildNumber.toString(),
-    style: TextStyle(color: Colors.white))
-    ])),
-    body: _children[_currentIndex],
-    fabInRail: true,
-    includeBaseDestinationsInMenu: _includeBaseDestinationsInMenu,
-    );
+              if (userDetails.featureToggles.contains("messages")) ...[Badge(
+                  position: BadgePosition.topStart(),
+                  badgeContent: Text(newMessages.toString()),
+                  child: IconButton(
+                    color: Colors.black,
+                    icon: const Icon(Icons.message),
+                    tooltip: 'Messages',
+                    onPressed: () async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) => Chats(),
+                          //fullscreenDialog: true,
+                        ),
+                      );
+                    },
+                  ))]
+              ,
+              if (userDetails.featureToggles.contains("qr")) ...[
+                IconButton(
+                  icon: const Icon(Icons.qr_code_scanner),
+                  tooltip: 'Identify Asset',
+                  onPressed: () async {
+                    var hasFound = false;
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              Scaffold(
+                                  appBar: AppBar(
+                                    title: Text("Identify Asset"),
+                                  ),
+                                  body: AppBarcodeScannerWidget.defaultStyle(
+                                    resultCallback: (String code) {
+                                      if (!hasFound) {
+                                        Navigator.pop(context);
+                                        hasFound = true;
+                                        AssetsView()
+                                            .showFindMyDialog(context, code);
+                                      }
+                                    },
+                                  )),
+                          fullscreenDialog: false,
+                        ));
+                  },
+                )
+              ]
+            ],
+            backgroundColor: Colors.white,
+            toolbarHeight: 42,
+            title: Text('MyBuildings.live',
+                style: GoogleFonts.roboto(
+                    fontSize: 12,
+                    color: Color(0xFF136d1b),
+                    fontWeight: FontWeight.bold)),
+            shape: RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.vertical(bottom: Radius.circular(10))),
+            leading: Column(children: <Widget>[
+              Text(
+                  _packageInfo.version.toString() +
+                      '+' +
+                      _packageInfo.buildNumber.toString(),
+                  style: TextStyle(color: Colors.white))
+            ])),
+        body: _children[_currentIndex],
+        fabInRail: true,
+        includeBaseDestinationsInMenu: _includeBaseDestinationsInMenu,
+      );
+    });
   }
 }
 
