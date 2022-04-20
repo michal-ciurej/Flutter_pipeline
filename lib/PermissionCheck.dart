@@ -10,6 +10,7 @@ class PermissionCheck {
   static String SWAP_ASSET = "swap_asset";
   static String PRINT_ASSET = "print_asset";
   static String SEND_MESSAGE = "send_message";
+  static String EDIT_ASSET="edit_asset";
 
   static bool check(String permission, BuildContext context) {
     if (dotenv.env['PERMISSION_CHECK'].toString() == "false" ||

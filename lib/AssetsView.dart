@@ -220,34 +220,7 @@ class _AssetsView extends State<AssetsView> {
                             child: Column(
                               children: [
                                 ListTile(
-                                  leading: IconButton(
-                                    iconSize: 30,
-                                    icon: const Icon(
-                                        Icons.published_with_changes_outlined),
-                                    tooltip: 'Replace Asset',
-                                    onPressed: () {
-                                      if (PermissionCheck.check(
-                                          PermissionCheck.SWAP_ASSET,
-                                          context)) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute<void>(
-                                            builder: (BuildContext context) =>
-                                                ReplaceAsset(
-                                                    site: sites.sites[1].name,
-                                                    stompClient: stompClient,
-                                                    originalAsset: enabledAssets
-                                                        .where((element) =>
-                                                            element.site ==
-                                                            sitesList[
-                                                                group_index])
-                                                        .elementAt(index)),
-                                            //fullscreenDialog: true,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                  ),
+
                                   title: Text(
                                     enabledAssets
                                         .where((element) =>
@@ -420,7 +393,77 @@ class _AssetsView extends State<AssetsView> {
                                           })
                                     ]),
                                   ]))
-                                ]
+                                ],Row(children:[Container(
+                                    child: Row(children: [
+                                      IconButton(
+                                        iconSize: 15,
+                                        icon: const Icon(Icons
+                                            .published_with_changes_outlined),
+                                        tooltip: 'Replace Asset',
+                                        onPressed: () {
+                                          if (PermissionCheck.check(
+                                              PermissionCheck.SWAP_ASSET,
+                                              context)) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute<void>(
+                                                builder: (BuildContext
+                                                context) =>
+                                                    ReplaceAsset(
+                                                      mode:"swap",
+                                                        site: sites
+                                                            .sites[1].name,
+                                                        stompClient:
+                                                        stompClient,
+                                                        originalAsset: enabledAssets
+                                                            .where((element) =>
+                                                        element
+                                                            .site ==
+                                                            sitesList[
+                                                            group_index])
+                                                            .elementAt(
+                                                            index)),
+                                                //fullscreenDialog: true,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      IconButton(
+                                        iconSize: 15,
+                                        icon: const Icon(Icons
+                                            .edit),
+                                        tooltip: 'Edit Asset',
+                                        onPressed: () {
+                                          if (PermissionCheck.check(
+                                              PermissionCheck.EDIT_ASSET,
+                                              context)) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute<void>(
+                                                builder: (BuildContext
+                                                context) =>
+                                                    ReplaceAsset(
+                                                        mode:"edit",
+                                                        site: sites
+                                                            .sites[1].name,
+                                                        stompClient:
+                                                        stompClient,
+                                                        originalAsset: enabledAssets
+                                                            .where((element) =>
+                                                        element
+                                                            .site ==
+                                                            sitesList[
+                                                            group_index])
+                                                            .elementAt(
+                                                            index)),
+                                                //fullscreenDialog: true,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      )
+                                    ]))])
                               ],
                             ),
                           );
