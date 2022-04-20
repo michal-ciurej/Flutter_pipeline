@@ -1,4 +1,5 @@
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:alerts/AppMessages.dart';
@@ -21,10 +22,11 @@ class ReplaceAsset extends StatelessWidget {
   final _formKey = GlobalKey<FormBuilderState>();
   StompClient stompClient;
   Asset originalAsset;
+  var mode;
 
 
 
-  ReplaceAsset({required this.site, required this.stompClient, required this.originalAsset});
+  ReplaceAsset({required this.site, required this.stompClient, required this.originalAsset, required this.mode});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class ReplaceAsset extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF25b432),
-        title: Text('Replace Asset'),
+        title: mode == "swap" ? Text('Replace Asset') :Text('Edit Asset') ,
       ),
       body: SingleChildScrollView(child:Center(
         child: FormBuilder(
@@ -152,15 +154,8 @@ class ReplaceAsset extends StatelessWidget {
 
                           if (_formKey.currentState!.validate()) {
 
-                            stompClient.send(
-                              destination: '/app/assets/update',
-                              body: json.encode(originalAsset.toJson()),
-                            );
+                           confirmAction(context, originalAsset, mode);
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Asset Created'))
-                            );
-                            Navigator.pop(context);
 
                           }else{
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -174,7 +169,7 @@ class ReplaceAsset extends StatelessWidget {
 
 
                         },
-                        child: const Text('Replace Asset'),
+                        child: mode == "swap" ? Text('Replace Asset') :Text('Edit Asset'),
                       ),
                     ]))
                 )
@@ -182,4 +177,58 @@ class ReplaceAsset extends StatelessWidget {
       ),
       ));
   }
+}
+
+
+void confirmAction(BuildContext  context, Asset originalAsset, var mode){
+  var shouldContinue = false;
+
+  Timer.run(() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text(
+            'Confirm Changes'),
+        content: const Text(
+            'Are you sure you want to make these changes ?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              shouldContinue = false;
+              Navigator.pop(
+                  context, 'Cancel');
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              shouldContinue = true;
+
+              if(mode == "swap") {
+                stompClient.send(
+                  destination: '/app/assets/update',
+                  body: json.encode(originalAsset.toJson()),
+                );
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Asset Swapped'))
+                );
+              }else{
+                stompClient.send(
+                  destination: '/app/assets/edit',
+                  body: json.encode(originalAsset.toJson()),
+                );
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Asset Updated')));
+              }
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  });
 }

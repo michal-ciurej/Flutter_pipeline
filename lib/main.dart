@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:js';
 
 import 'package:adaptive_navigation/adaptive_navigation.dart';
 import 'package:alerts/AlertsScreen.dart';
@@ -97,6 +98,7 @@ void onConnect(StompFrame frame) {
       assets.add(result);
     },
   );
+
   stompClient.subscribe(
     destination: '/user/topic/conversations',
     callback: (frame) {
@@ -198,6 +200,7 @@ Assets assets = new Assets();
 UserDetails userDetails = UserDetails("");
 Conversations conversations = new Conversations();
 
+
 int _currentIndex = 0;
 
 void main() async {
@@ -223,6 +226,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => cases),
         ChangeNotifierProvider(create: (context) => assets),
         ChangeNotifierProvider(create: (context) => conversations)
+
       ],
       child: const MyApp(),
     ),

@@ -141,6 +141,9 @@ class Asset {
         'model': model,
         'location': location,
         'id':id,
-        'sensorId': sensorId
+        'sensorId': sensorId,
+         'activeAlerts':activeAlerts,
+         'tickets':tickets,
+
       };
 }

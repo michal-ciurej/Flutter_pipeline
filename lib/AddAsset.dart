@@ -31,6 +31,23 @@ class AddAsset extends StatelessWidget {
     asset.site=site;
 
 
+    stompClient.subscribe(
+      destination: '/user/topic/eventmessages',
+      callback: (frame) {
+        String result =frame.body!;
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result),
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Ok',
+                onPressed: () { Navigator.pop(context);
+                }
+              ))
+        );
+        Navigator.pop(context);
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFF25b432),
@@ -152,10 +169,6 @@ class AddAsset extends StatelessWidget {
                               body: json.encode(asset.toJson()),
                             );
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Asset Created'))
-                            );
-                            Navigator.pop(context);
 
                           }else{
                             ScaffoldMessenger.of(context).showSnackBar(
