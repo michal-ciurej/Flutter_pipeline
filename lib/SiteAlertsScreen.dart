@@ -43,19 +43,18 @@ class SiteAlertsScreen extends StatefulWidget {
 
   var isFilterSwitched;
 
-   SiteAlertsScreen(
+  SiteAlertsScreen(
       {Key? key,
       required this.site,
       required this.siteSpecificMessages,
       required this.client,
       required this.update,
-      required this.isFilterSwitched
-      })
+      required this.isFilterSwitched})
       : super(key: key);
 
   @override
-  _SiteAlertsScreen createState() =>
-      _SiteAlertsScreen(client, site, siteSpecificMessages, update, isFilterSwitched);
+  _SiteAlertsScreen createState() => _SiteAlertsScreen(
+      client, site, siteSpecificMessages, update, isFilterSwitched);
 }
 
 class _SiteAlertsScreen extends State<SiteAlertsScreen> {
@@ -65,8 +64,12 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
   ValueChanged<String> update;
   var isFilterSwitched;
 
-  _SiteAlertsScreen(StompClient this.client, String this.site,
-      List<AlarmMessagePayload> this.siteSpecificMessages, this.update, this.isFilterSwitched);
+  _SiteAlertsScreen(
+      StompClient this.client,
+      String this.site,
+      List<AlarmMessagePayload> this.siteSpecificMessages,
+      this.update,
+      this.isFilterSwitched);
 
   @override
   void initState() {
@@ -140,12 +143,10 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
         ),
         body: Consumer<AppMessages>(builder: (context, data, _) {
-
-          siteSpecificMessages .clear();
-          siteSpecificMessages = Provider.of<AppMessages>(context).entries
-              .where((element) =>
-          element.site ==
-              site)
+          siteSpecificMessages.clear();
+          siteSpecificMessages = Provider.of<AppMessages>(context)
+              .entries
+              .where((element) => element.site == site)
               .toList();
 
           var enabledTypes = Provider.of<Assets>(context)
@@ -155,8 +156,8 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
 
           siteSpecificMessages = siteSpecificMessages
               .where((element) => enabledTypes
-              .where((type) => type.assetClass == element.assetClass)
-              .isNotEmpty)
+                  .where((type) => type.assetClass == element.assetClass)
+                  .isNotEmpty)
               .toList();
 
           if (isFilterSwitched) {
@@ -164,7 +165,6 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                 .where((element) => element.status != 'Inactive')
                 .toList();
           }
-
 
           return ListView.builder(
               shrinkWrap: true,
@@ -216,6 +216,7 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
 
                         // The start action pane is the one at the left or the top side.
                         startActionPane: ActionPane(
+                          extentRatio: 0.3,
                           // A motion is a widget used to control how the pane animates.
                           motion: const ScrollMotion(),
                           //check here
@@ -230,11 +231,11 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                             // A SlidableAction can have an icon and/or a label.
                             if (element.ack == 'false') ...[
                               SlidableAction(
-                                onPressed: (BuildContext context)
-                                    {
-                                      if(PermissionCheck.check(PermissionCheck.ACK_ALARM, context))
-                                        update(element.id);
-                                    },
+                                onPressed: (BuildContext context) {
+                                  if (PermissionCheck.check(
+                                      PermissionCheck.ACK_ALARM, context))
+                                    update(element.id);
+                                },
                                 backgroundColor: Color(0xff595959),
                                 foregroundColor: Colors.white,
                                 icon: Icons.task_alt_outlined,
@@ -242,8 +243,9 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                               )
                             ] else ...[
                               SlidableAction(
-                                onPressed: (BuildContext context)  {
-                                  if(PermissionCheck.check(PermissionCheck.CLOSE_ALARM, context))
+                                onPressed: (BuildContext context) {
+                                  if (PermissionCheck.check(
+                                      PermissionCheck.CLOSE_ALARM, context))
                                     update(element.id);
                                 },
                                 backgroundColor: Color(0xff595959),
@@ -256,23 +258,40 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                         ),
 
                         // The end action pane is the one at the right or the bottom side.
-                        endActionPane:
-                            !userDetails.featureToggles.contains("ticket")
-                                ? null
-                                : const ActionPane(
-                                    motion: ScrollMotion(),
-                                    children: [
-                                      SlidableAction(
-                                        // An action can be bigger than the others.
-                                        flex: 2,
-                                        onPressed: doNothing,
-                                        backgroundColor: Color(0xFF7BC043),
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.archive,
-                                        label: 'Archive',
-                                      ),
-                                    ],
+                        endActionPane: !userDetails.featureToggles
+                                    .contains("ticket")
+
+                            ? null
+                            : ActionPane(
+                                extentRatio: 0.3,
+                                motion: ScrollMotion(),
+                                children: [
+                                  SlidableAction(
+                                    // An action can be bigger than the others.
+                                    flex: 2,
+                                    onPressed: (BuildContext context) {
+                                      if (PermissionCheck.check(
+                                          PermissionCheck.CLOSE_ALARM,
+                                          context)) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute<void>(
+                                            builder: (BuildContext context) =>
+                                                FullScreenDialog(
+                                                    id: element.id,
+                                                    stompClient: stompClient),
+                                            //  fullscreenDialog: true,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    backgroundColor: Color(0xFF7BC043),
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.confirmation_number,
+                                    label: 'Raise Ticket',
                                   ),
+                                ],
+                              ),
 
                         // The child of the Slidable is what the user sees when the
                         // component is not dragged.
@@ -313,7 +332,20 @@ class _SiteAlertsScreen extends State<SiteAlertsScreen> {
                                     .textTheme
                                     .subtitle2
                                     ?.copyWith(fontSize: 19),
-                              )
+                              ),
+                              if (assets.assets
+                                      .where((asset) =>
+                                          asset.name == element.asset &&
+                                          asset.site == element.site)
+                                      .toList()
+                                      .first
+                                      .tickets >
+                                  0) ...[
+                                Icon(
+                                  Icons.confirmation_number,
+                                  size: 15,
+                                )
+                              ]
                             ]),
                             subtitle: Text(element.dateTime,
                                 style: GoogleFonts.roboto(

@@ -270,7 +270,7 @@ class _AssetsView extends State<AssetsView> {
                                                 element.site ==
                                                 sitesList[group_index])
                                             .elementAt(index)
-                                            .activeAlerts)
+                                            .activeAlerts.toString())
                                       ]),
                                       Row(children: [
                                         Icon(Icons.traffic,
@@ -294,7 +294,7 @@ class _AssetsView extends State<AssetsView> {
                                                 element.site ==
                                                 sitesList[group_index])
                                             .elementAt(index)
-                                            .tickets)
+                                            .tickets.toString())
                                       ])
                                     ])),
                                 if (userDetails.featureToggles

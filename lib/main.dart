@@ -589,6 +589,7 @@ class TicketModel {
   var alertId;
   var status;
   var assignee = 'None';
+  var asset;
 
   Map<String, dynamic> toJson() =>
       {
@@ -599,7 +600,8 @@ class TicketModel {
         'alertId': alertId,
         'status': status,
         'id': id,
-        'assignee': assignee
+        'assignee': assignee,
+        'asset': asset
       };
 }
 

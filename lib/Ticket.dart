@@ -31,7 +31,7 @@ class FullScreenDialog extends StatelessWidget {
     newTicket.alertId=id;
     newTicket.site = alert.site;
     newTicket.date=DateTime.now().toIso8601String();
-
+    newTicket.asset=alert.asset;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -79,6 +79,19 @@ class FullScreenDialog extends StatelessWidget {
                         items: sites.sites
                             .map((site) => DropdownMenuItem(
                             value: site.name, child: Text(site.name)))
+                            .toList(),
+                      ),
+                      FormBuilderDropdown(
+                        onChanged: (value){newTicket.asset = value;},
+                        name: "asset",
+                        style: Theme.of(context).textTheme.bodyText1,
+                        decoration: InputDecoration(labelText: "Asset"),
+                        initialValue: alert.asset,
+                        hint: Text('Select Asset'),
+                        validator: FormBuilderValidators.compose([FormBuilderValidators.required(context)]),
+                        items: assets.assets.where((element) => element.site == newTicket.site).toList()
+                            .map((asset) => DropdownMenuItem(
+                            value: asset.name, child: Text(asset.name)))
                             .toList(),
                       ),
                       FormBuilderDropdown(

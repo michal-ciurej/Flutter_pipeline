@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +8,15 @@ import 'SettingsRepository.dart';
 class Assets extends ChangeNotifier {
   List<Asset> assets = [];
   List<AssetClass> assetClasses = [];
+  Map<String, Set<String>> manufacturers = new Map<String, Set<String>>();
+
+  List<String> location = ['New'];
+
+  Assets() {
+    manufacturers.putIfAbsent("New", () {
+      return Set.of(['New']);
+    });
+  }
 
   void add(List<Map<String, dynamic>> results) {
     SettingsRepository.loadAssets().then((value) {
@@ -52,17 +63,32 @@ class Assets extends ChangeNotifier {
             -1) {
           assetClasses.add(AssetClass(asset.assetClass, asset.checked));
         }
+
+        if (!manufacturers.containsKey(asset.manufacturer)) {
+          manufacturers.putIfAbsent(asset.manufacturer, () => Set.of([asset.model]));
+        } else {
+          manufacturers.update(asset.manufacturer, (value) {
+            value.add(asset.model);
+            return value;
+          });
+        }
+
+
+        if (location.indexWhere((element) => element == asset.location) == -1) {
+          location.add(asset.location);
+        }
       }
 
-      for(int i = 0; i< assets.length; i++) {
-        if(assets[i].status=='replaced'){
+      for (int i = 0; i < assets.length; i++) {
+        if (assets[i].status == 'replaced') {
           assets.removeAt(i);
         }
       }
 
-
       notifyListeners();
     });
+
+
   }
 
   void update(index, value) {
@@ -109,7 +135,6 @@ class Asset {
   var location;
   var sensorId;
 
-
   Icon getIcon(var size) {
     switch (type) {
       case 'hvac':
@@ -140,10 +165,9 @@ class Asset {
         'manufacturer': manufacturer,
         'model': model,
         'location': location,
-        'id':id,
+        'id': id,
         'sensorId': sensorId,
-         'activeAlerts':activeAlerts,
-         'tickets':tickets,
-
+        'activeAlerts': activeAlerts,
+        'tickets': tickets,
       };
 }

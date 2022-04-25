@@ -221,31 +221,35 @@ class _AlertHistoryScreen extends State<AlertHistoryScreen> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
       ),
-      body: ListView.builder(
-          itemCount: history.length,
-          itemBuilder: (context, index) {
-            return Neumorphic(
-              margin: EdgeInsets.fromLTRB(25, 5, 25, 0),
-              style: NeumorphicStyle(
-                shape: NeumorphicShape.flat,
-                border: NeumorphicBorder(color: Color(0x33000000), width: 0.8),
-                boxShape:
-                    NeumorphicBoxShape.roundRect(BorderRadius.circular(12)),
-                depth: 1,
-                lightSource: LightSource.topLeft,
-                color: Colors.white,
-              ),
-              child: Container(
-                  padding: const EdgeInsets.all(20),
-                  child: Row(children: [
-                    Text(
-                        history[index].dateTime,
-                        style: Theme.of(context).textTheme.subtitle2),
-                    Text(" - " + history[index].name,
-                        style: Theme.of(context).textTheme.subtitle2)
-                  ])),
-            );
-          }),
+      body: Column(children: <Widget>[
+        Container(height: 300, width: MediaQuery.of(context).size.width - 50 ,child:BarChart(data:history)),
+        Expanded(
+            child: ListView.builder(
+                itemCount: history.length,
+                itemBuilder: (context, index) {
+                  return Neumorphic(
+                    margin: EdgeInsets.fromLTRB(25, 5, 25, 0),
+                    style: NeumorphicStyle(
+                      shape: NeumorphicShape.flat,
+                      border: NeumorphicBorder(
+                          color: Color(0x33000000), width: 0.8),
+                      boxShape: NeumorphicBoxShape.roundRect(
+                          BorderRadius.circular(12)),
+                      depth: 1,
+                      lightSource: LightSource.topLeft,
+                      color: Colors.white,
+                    ),
+                    child: Container(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(children: [
+                          Text(history[index].dateTime,
+                              style: Theme.of(context).textTheme.subtitle2),
+                          Text(" - " + history[index].name,
+                              style: Theme.of(context).textTheme.subtitle2)
+                        ])),
+                  );
+                }))
+      ]),
 
       // if (history.isEmpty) ...[
 
