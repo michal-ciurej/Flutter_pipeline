@@ -42,6 +42,7 @@ class _AddAsset extends State<AddAsset> {
   ){
     asset.site = site;
     asset.manufacturer='New';
+    asset.location='New';
 
   }
 
@@ -239,6 +240,10 @@ class _AddAsset extends State<AddAsset> {
 
 
                                               setState(() {
+                                                if(value == 'New') {
+                                                  _showModelTextField=true;
+                                                }
+
                                                 asset.model = value;
 
                                               });

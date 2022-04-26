@@ -65,10 +65,11 @@ class Assets extends ChangeNotifier {
         }
 
         if (!manufacturers.containsKey(asset.manufacturer)) {
-          manufacturers.putIfAbsent(asset.manufacturer, () => Set.of([asset.model]));
+          manufacturers.putIfAbsent(asset.manufacturer, () => Set.of([asset.model, 'New']));
         } else {
           manufacturers.update(asset.manufacturer, (value) {
             value.add(asset.model);
+            value.add('New');
             return value;
           });
         }
